@@ -1,0 +1,425 @@
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+
+{% block title %}
+Finance Tracker
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/financeTrackerStyles.css' %}">
+{% endblock %}
+
+<div id="content">
+    {% block content %}
+    <h1>Finance Tracker</h1>
+    <div class="bg-light p-4 rounded shadow-sm">
+        {% if message %}
+            {% if is_error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endif %}
+        
+        <h2 style="margin-bottom: 20px;">Transaction Categories</h2>
+        <div id="categories">
+            <h5 style="margin-bottom: 30px;">These are the categories for your transactions, useful for identifying trends.</h5>
+
+            <div class="row justify-content-center">
+                {% include 'main/category_item.html' with clean_transaction_type="Income Source" var_transation_type="income_source" category_examples="work, allowance, etc." placeholder="Walmart Paycheck" iterable=income_categories  %}
+                {% include 'main/category_item.html' with clean_transaction_type="Expense" var_transation_type="expense" category_examples="food, hobbies, etc." placeholder="Video Games" iterable=expense_categories %}
+            </div>
+            <p style="font-size: 18px; margin-top: 20px;">Category names must be unique within their transaction type and<br>may not exceed 25 characters or contain special symbols.</p>
+
+        </div>
+    </div>
+
+    <div class="bg-light p-4 rounded shadow-sm mt-4">
+        <h1>Add Transaction</h1>
+        <form method="post" id="transaction-form" class="container">
+            {% csrf_token %}
+            <div class="row justify-content-center align-items-center g-3">
+                <!-- Type section stays fixed -->
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center justify-content-start">
+                        <div class="form-check me-5">
+                            <input type="radio" id="income_source" name="transaction_type" value="income_source" onclick="toggleCategoryDivs()" required class="form-check-input">
+                            <label for="income_source" class="form-check-label larger-font">Income</label>
+                        </div>
+                        <div class="form-check ms-5" style="margin-left: 15px;">
+                            <input type="radio" id="expense" name="transaction_type" value="expense" onclick="toggleCategoryDivs()" required class="form-check-input">
+                            <label for="expense" class="form-check-label larger-font">Expense</label>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-md-3" id="add_transaction_income_categories" style="display: none;">
+                <label for="transaction-type" class="form-label">Category</label>
+                <select id="income_category" name="income_category" class="form-select" required>
+                    <option value="" disabled selected>Select Category</option>
+                    {% for category in income_categories %}
+                        <option value="{{category.category_name}}">{{category.category_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3" id="add_transaction_expense_categories" style="display: none;">
+                <label for="transaction-type" class="form-label">Category</label>
+                <select id="expense_category" name="expense_category" class="form-select" required>
+                    <option value="" disabled selected>Select Category</option>
+                    {% for category in expense_categories %}
+                        <option value="{{category.category_name}}">{{category.category_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- New row for Name, Date, and Amount fields -->
+            <div class="row justify-content-center g-3">
+                <div class="col-md-3">
+                    <label for="transaction-name" class="form-label">Name</label>
+                    <input type="text" id="transaction-name" name="transaction_name" class="form-control" placeholder="e.g. New Computer" required maxlength="50" pattern="^[A-Za-z0-9 ]*$">
+                </div>
+                <div class="col-md-3">
+                    <label for="transaction-date" class="form-label">Date</label>
+                    <input type="date" id="transaction-date" name="transaction_date" class="form-control" min="1900-01-01" max="2100-12-31" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="transaction-amount" class="form-label">Amount</label>
+                    <input type="number" id="transaction-amount" name="transaction_amount" class="form-control" placeholder="e.g., 1000" step="0.01" min="0" required>
+                </div>
+            </div>
+
+            <input type="hidden" id="hidden-income-categories" name="hidden_income_categories" value="{{income_category_names}}">
+            <input type="hidden" id="hidden-expense-categories" name="hidden_expense_categories" value="{{expense_category_names}}">
+
+            <!-- Centered Button -->
+            <div class="row justify-content-center m-3">
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Add</button>
+                </div>
+            </div>
+        </form>
+    
+        <!-- Success/Error Message Display -->
+        <p style="font-size: 18px; margin-top: 20px;">Transaction names may not exceed 50 characters or contain special symbols.<br>Amounts must be positive.</p>
+    </div>
+    
+    
+<!-- Top Section: Title and Description -->
+<div class="bg-light p-4 rounded shadow-sm">
+
+</div>
+
+<!-- Split Layout: 25% - 75% -->
+<div class="row mt-3">
+    <!-- Left Section (25%) -->
+    <div class="col-md-3">
+        <div class="bg-light p-4 rounded shadow-sm">
+            <h2>Filter transactions</h2>
+            <div>
+                <strong>Transaction Type</strong>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="transactionTypeFilter" id="income_source-filter" value="income_source-filter" checked>
+                    <label class="form-check-label" for="income_source-filter">Income</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="transactionTypeFilter" id="expense-filter" value="expense-filter" checked>
+                    <label class="form-check-label" for="expense-filter">Expense</label>
+                </div>
+            </div>
+
+            <div>
+                <strong style="display: block;">Categories (Income Source)</strong>
+                {% for category in income_categories %}
+                    <div class="form-check mt-2">
+                        <input class="form-check-input income_source-category-filter" type="checkbox" name="categoryFilter" id="{{category.category_name}}-income_source-filter" value="{{category.category_name}}-income_source-filter" checked>
+                        <label class="form-check-label" for="{{category.category_name}}-income_source-filter">{{category.category_name}}</label>
+                    </div>
+                {% endfor %}
+                <strong>Categories (Expense)</strong>
+                {% for category in expense_categories %}
+                    <div class="form-check mt-2">
+                        <input class="form-check-input expense-category-filter" type="checkbox" name="categoryFilter" id="{{category.category_name}}-expense-filter" value="{{category.category_name}}-expense-filter" checked>
+                        <label class="form-check-label" for="{{category.category_name}}-expense-filter">{{category.category_name}}</label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div style="margin-top: 20px;">
+                <label>
+                    <input type="checkbox" id="date-filter-checkbox">
+                    <p style="display: inline;">
+                        Filter by Date
+                    </p>
+                </label>
+            </div>
+            <div>
+                <label for="start-date">Start Date:</label>
+                <input type="date" id="start-date" name="start-date">
+            </div>
+            <div>
+                <label for="end-date">End Date:</label>
+                <input type="date" id="end-date" name="end-date">
+            </div>         
+            
+            <button id="update-date-button" class="btn btn-primary">Update Date</button>
+
+
+            <div style="margin-top: 20px;">
+                <label>
+                    <input type="checkbox" id="price-filter-checkbox">
+                    <p style="display: inline;">
+                        Filter by Price
+                    </p>
+                </label>
+            </div>
+            <div>
+                <label for="low-price">Low Price:</label>
+                <input type="number" id="low-price" name="low-price">
+            </div>
+            <div>
+                <label for="high-price">High Price:</label>
+                <input type="number" id="high-price" name="high-price">
+            </div>
+            <label id="price-filter-error-1" class="text-danger" style="display: none;">
+                Please fill out both fields
+            </label>
+            <label id="price-filter-error-2" class="text-danger" style="display: none;">
+                Please enter a valid, positive number
+            </label>
+            <label id="price-filter-error-3" class="text-danger" style="display: none;">
+                High Price must be greater than or equal to Low Price
+            </label>
+            
+            <button id="reset-all-button" class="btn btn-danger mt-3" onclick="resetFilters()">Reset All</button>
+        </div>
+    </div>
+    
+    <!-- Right Section (75%) -->
+    <div class="col-md-9">
+        <div class="bg-light p-4 rounded shadow-sm">
+            <h2>View Transactions</h2>
+            <h3>Current Balance: $<span id="current-balance" class="current-balance"></span></h3>
+            <h6>Select categories to mass delete them.</h6>
+
+            <h2 id="noTransactionsText" style="display: none;">No Transactions found. Please add some or change your filters</h2>
+
+            <table id="transactionsTable">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all" onclick="toggleSelectAll(this)"></th> <!-- Select all checkbox -->
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Amount ($)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for transaction in all_transactions %}
+                        <tr class="{% if transaction.transaction_type == 'income_source' %}green{% else %}red{% endif %}" id="transaction-id-{{ transaction.id }}" name="transactions">
+                            <td>
+                                <label hidden>{{transaction.transaction_type}}</label>
+                            </td>
+                            <td>
+                                {% if transaction.transaction_category.category_name %}
+                                    <span class="view-mode">{{ transaction.transaction_category.category_name}}</span>
+                                {% else %}
+                                    <span class="view-mode">No Category</span>
+                                {% endif %}
+                                <select class="edit-mode-category-dropdown form-select" name="income-categories-for-edit-transaction" style="display:none;">
+                                    {% for category in income_categories %}
+                                        <option value="{{ category.category_name }}" {% if transaction.transaction_category and transaction.transaction_category.category_name == category.category_name %}selected{% endif %}>
+                                            {{ category.category_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <select class="edit-mode-category-dropdown form-select" name="expense-categories-for-edit-transaction" style="display:none;">
+                                    {% for category in expense_categories %}
+                                        <option value="{{ category.category_name }}" {% if transaction.transaction_category and transaction.transaction_category.category_name == category.category_name %}selected{% endif %}>
+                                            {{ category.category_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <span class="view-mode">{{ transaction.transaction_date }}</span>
+                                <input type="date" class="edit-mode form-control" name="date" value="{{ transaction.transaction_date|date:'Y-m-d' }}" style="display:none;" required>
+                            </td>
+                            <td>
+                                <span class="view-mode">{{ transaction.transaction_name }}</span>
+                                <input type="text" class="edit-mode form-control" name="name" value="{{ transaction.transaction_name }}" style="display:none;" maxlength="50" required pattern="^[A-Za-z0-9 ]*$">
+                            </td>
+                            <td>
+                                <span class="view-mode">${{ transaction.transaction_amount|format_money }}</span>
+                                <input type="number" step="0.01" class="edit-mode form-control" name="amount" value="{{ transaction.transaction_amount }}" style="display:none;" required id="amount">
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm edit-btn" onclick="toggleEditTransactionMode('{{ transaction.id }}', '{{ transaction.transaction_type }}')">Edit</button>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="confirmDelete('{{ transaction.id }}')">Delete</button>
+                                <button type="button" class="btn btn-success btn-sm save-btn" onclick="saveTransaction('{{ transaction.id }}', '{{ transaction.transaction_type }}')" style="display:none;">Save</button>
+                                <button type="button" class="btn btn-secondary btn-sm cancel-btn" onclick="cancelEditTransaction('{{ transaction.id }}')" style="display:none;">Cancel</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+
+{% block scripts %}
+    <script src="{% static 'js/addCategoriesFunctions.js' %}"></script>
+    <script src="{% static 'js/modifyCategoriesFunctions.js' %}"></script>
+    <script src="{% static 'js/showConfirmationModal.js' %}"></script>
+    <script src="{% static 'js/addTransactionsFunctions.js' %}"></script>
+    <script src="{% static 'js/modifyTransactionsFunctions.js' %}"></script>
+    <script src="{% static 'js/helpers.js' %}"></script>
+    <script src="{% static 'js/updateCurrentBalance.js' %}"></script>
+    <script src="{% static 'js/filterTransactionsFunctions.js' %}"></script>
+{% endblock %}
+
+{% include 'main/modal_confirmation.html' %}
+
+
+<script>
+    window.onload = function() {
+        autofillDate(); // Call the function when the page loads
+        filterTransactions(); // Call the function when the page loads
+       // updateCurrentBalance();
+       // toggleCategoryDivs(); // Keep your existing toggleCategoryDivs function as well
+    };
+    
+</script>
+
+<style>
+    h1, h2, h3, h4, h5, h6, p {
+    text-align: center;
+}
+
+.larger-font {
+    font-size: 1.25rem; /* Adjust the size as needed */
+}
+
+
+.error-text {
+  color: red;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.error-icon {
+  margin-right: 5px;
+}
+
+.category-container {
+    height: 168px;
+    max-height: 168px; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+h5, h6 { 
+    font-weight: normal;
+}
+.list-group-item {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    animation: fadeIn 3s;
+}
+
+.current-balance {
+    animation: fadeIn 3s;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.list-group-item.fadeOut {
+    animation: fadeOut 3s forwards; /* Fade out when class 'fadeOut' is added */
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.list-group-item:hover {
+    background-color: #f0f0f0;
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+.btn-group {
+    display: inline-block;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+th {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+th:hover {
+    background-color: #ddd;
+}
+
+.sort-arrow {
+    margin-left: 8px;
+    font-size: 1em;
+}
+
+/* Hover effect on rows */
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Center table headers and content */
+table {
+    margin: 0 auto;
+}
+.green {
+    background-color: #d4edda;  /* Light green background */
+}
+
+.green:hover {
+    background-color: #9fd5b0;  /* Darker green on hover */
+}
+
+.red {
+    background-color: #f8d7da;  /* Light red background */
+}
+
+.red:hover {
+    background-color: #f1a7ac;  /* Darker red on hover */
+}
+</style>
+
+{% endblock %}

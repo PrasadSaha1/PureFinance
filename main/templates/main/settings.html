@@ -1,0 +1,63 @@
+{% extends 'main/base.html' %}
+
+{% load custom_filters %}
+{% load static %}
+
+{% block title %}
+Settings
+{% endblock %}
+<div id="content">
+    {% block content %}
+    <div class="bg-light p-4 rounded shadow-sm">
+        {% if message %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endif %}
+        <h1 class="text-center">Account Settings</h1>
+        <h3 class="text-center">Logged in as {{ user.username }}</h3>
+        <h3 class="text-center">Email: {{ user.email|format_email:email_level }}</h3>
+
+        <!-- Buttons Section -->
+        <div class="d-flex flex-column align-items-center mt-4">
+            {% if email_level == "None" %}
+                <button class="btn btn-primary mb-3" onclick="window.location.href='/add_email/'">Add Email</button>
+            {% elif email_level == "Unverified" %}
+                <form method="post" action="{% url 'resend_verification_email' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-primary mb-3">Resend verification email</button>
+                </form>
+            {% endif %}
+            <button class="btn btn-warning mb-3" onclick="window.location.href='/change_username/'">Change Username</button>
+
+            <!-- Change Password Button -->
+            <button class="btn btn-info mb-3" onclick="window.location.href='/change_password/'">Change Password</button>
+
+            <!-- Spacer between Change Password and Log Out -->
+            <div class="my-3"></div>
+
+            <!-- Log Out Button -->
+            <form method="post" action="{% url 'logout_view' %}" onsubmit="return handleFormSubmit(event, this, 'Are you sure that you would like to log out?');">
+                {% csrf_token %}
+                <button class="btn btn-danger mb-3">Log out</button>
+            </form>
+
+            <form method="post" action="{% url 'delete_account' %}" onsubmit="return handleFormSubmit(event, this, 'Are you sure that you would like to delete your account? This action cannot be undone');">
+                {% csrf_token %}
+                <button class="btn btn-danger mb-3">Delete Account</button>
+            </form>
+        </div>
+    </div>
+    <div class="bg-light p-4 rounded shadow-sm" style="margin-top: 20px;">
+        <h1 class="text-center">Options</h1>
+    </div>
+</div>
+
+{% include 'main/modal_confirmation.html' %}
+
+{% block scripts %}
+<script src="{% static 'js/showConfirmationModal.js' %}"></script>
+{% endblock %}
+
+{% endblock %}
+

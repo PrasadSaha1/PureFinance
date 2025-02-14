@@ -1,0 +1,91 @@
+h1, h2, h3, h4, h5, h6, p {
+    text-align: center;
+}
+h5, h6 { 
+    font-weight: normal;
+}
+.list-group-item {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f0f0f0;
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+.btn-group {
+    display: inline-block;
+}
+.collapsible {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.collapsible-content {
+    display: inline;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+th {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+th:hover {
+    background-color: #ddd;
+}
+
+.sort-arrow {
+    margin-left: 8px;
+    font-size: 1em;
+}
+
+/* Hover effect on rows */
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Center table headers and content */
+table {
+    margin: 0 auto;
+}
+.green {
+    background-color: #d4edda;  /* Light green background */
+}
+
+.green:hover {
+    background-color: #28a745;  /* Darker green on hover */
+    color: white;               /* Change text color to white on hover */
+}
+
+.red {
+    background-color: #f8d7da;  /* Light red background */
+}
+
+.red:hover {
+    background-color: #dc3545;  /* Darker red on hover */
+    color: white;               /* Change text color to white on hover */
+}
+
