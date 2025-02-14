@@ -1,13 +1,16 @@
 {
-  "builds": [{
-      "src": "my_finance/wsgi.py",
-      "use": "@ardnt/vercel-python-wsgi",
-      "config": { "maxLambdaSize": "15mb" }
-  }],
+  "version": 2,
+  "builds": [
+    {
+      "src": "manage.py",
+      "use": "@vercel/python"
+    }
+  ],
   "routes": [
-      {
-          "src": "/(.*)",
-          "dest": "my_finance/wsgi.py"
-      }
+    {
+      "src": "/(.*)",
+      "dest": "manage.py"
+    }
   ]
 }
+
