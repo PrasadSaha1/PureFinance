@@ -23,7 +23,6 @@ django-livereload-server==0.5.1
 django-timezone-field==7.0
 EasyProcess==1.1
 entrypoint2==1.1
-Flask==3.0.3
 git-filter-repo==2.47.0
 greenlet==3.1.1
 gunicorn==23.0.0
@@ -43,19 +42,12 @@ postgres==4.0
 prompt_toolkit==3.0.48
 psycopg2-binary==2.9.10
 psycopg2-pool==1.2
-PyAutoGUI==0.9.54
-pygame==2.6.0
-PyGetWindow==0.0.9
 pyinstaller==6.5.0
 pyinstaller-hooks-contrib==2024.3
-PyMsgBox==1.0.9
 pyperclip==1.8.2
 PyRect==0.2.0
 pyscreenshot==3.1
 PyScreeze==0.1.29
-PySide6==6.7.2
-PySide6_Addons==6.7.2
-PySide6_Essentials==6.7.2
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
