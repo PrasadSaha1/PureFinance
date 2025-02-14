@@ -1,9 +1,8 @@
 {
-  "version": 2,
-  "builds": [
+  "routes": [
     {
-      "src": "my_finance/wsgi.py",
-      "use": "@vercel/python"
+      "src": "/(.*)",
+      "dest": "my_finance/asgi.py"
     }
   ]
 }
