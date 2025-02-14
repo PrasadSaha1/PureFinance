@@ -1,5 +1,19 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "my_finance/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
   "routes": [
+    {
+      "src": "/static/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "dest": "/static/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "my_finance/wsgi.py"
