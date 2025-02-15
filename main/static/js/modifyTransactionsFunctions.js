@@ -1,4 +1,4 @@
-
+/*
 function toggleDeleteSelectedButtonVisibility() {
     // this function determines whether or not the delete selected button, used for deleting multiple transactions at a time, will be visible
     // used in toggleSelectAll() (below) and the input for selecting a transaction for deletion
@@ -46,6 +46,7 @@ function massDeleteTransactions() {
         showConfirmationModal(form, confirmationMessage);
     }
 }
+    */
 
 
 function confirmDelete(transactionId) {
@@ -56,9 +57,12 @@ function confirmDelete(transactionId) {
 
     
 function deleteTransaction(transactionId) {
+    /* Deletes a transaction */
+
     const row = document.getElementById(`transaction-id-${transactionId}`);
-    row.remove();
-    updateCurrentBalance();
+    row.remove();  // remove it from sight
+    updateCurrentBalance();  // have the balance update
+    toggleNoCategoryFilter();  // see whether or not No Category is needed (if this was the only transaction with No Category, it is not needed anymore)
     // send the AJAX request
     fetch(`/delete_transaction/${transactionId}/`, {
         method: 'DELETE',
@@ -70,6 +74,8 @@ function deleteTransaction(transactionId) {
 }
 
 function toggleEditTransactionMode(transactionId, transactionType) {
+    /* This toggles edit mode for transactions */
+
     const row = document.getElementById(`transaction-id-${transactionId}`);  // get the row
     row.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');  // turn off view mode
     row.querySelectorAll('.edit-mode').forEach(el => el.style.display = '');  // turn on edit mode, allowing it to be edited
@@ -110,8 +116,20 @@ function cancelEditTransaction(transactionId){
 }
 
 
+function showError(field, message) {
+    /* Shows an error with saving the transaction */
+    const errorMessage = document.createElement('span');  // make the error message
+    errorMessage.className = 'error-message';
+    
+    errorMessage.style.marginLeft = '10px';  // styling
+    errorMessage.textContent = message;
+    field.parentNode.appendChild(errorMessage);  // append the error message to the div
+    hasError = true;  // prevent the AJAX request 
+}
+
 function saveTransaction(transactionId, transactionType) {
     // this function saves the transaction after a user edits it
+
     const row = document.getElementById(`transaction-id-${transactionId}`);  // get the row
     // const categoryField = row.querySelector('select[name="category"]');  // get the category, date, name, and amount
     const dateField = row.querySelector('input[name="date"]');
@@ -137,18 +155,9 @@ function saveTransaction(transactionId, transactionType) {
     // clear previous error messages
     row.querySelectorAll('.error-message').forEach(el => el.remove());
 
-    let hasError = false;
+    let hasError = false;  // if true, no AJAX request
 
     // shows errors if they arise
-    function showError(field, message) {
-        const errorMessage = document.createElement('span');  // make the error message
-        errorMessage.className = 'error-message';
-        
-        errorMessage.style.marginLeft = '10px';  // styling
-        errorMessage.textContent = message;
-        field.parentNode.appendChild(errorMessage);  // append the error message to the div
-        hasError = true;  // prevent the AJAX request 
-    }
 
     //  show error messages if the fields are empty or invalid
     if (!category) {
@@ -188,8 +197,8 @@ function saveTransaction(transactionId, transactionType) {
     elements[2].textContent = name;
     elements[3].textContent = `$${parseFloat(amount).toFixed(2)}`;
 
-    cancelEditTransaction(transactionId);
-    updateCurrentBalance();
+    cancelEditTransaction(transactionId);  // the equivlant of the user clicking cancel to go back to view mode
+    updateCurrentBalance(); 
 
 
     // send the AJAX request
@@ -202,8 +211,5 @@ function saveTransaction(transactionId, transactionType) {
         body: JSON.stringify({ category, date, name, amount })  // pass in the data
     })
     .then(response => response.json())
-    .then(data => {
-
-    })
 }
 

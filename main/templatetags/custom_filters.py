@@ -22,6 +22,7 @@ def format_money(value):
     value = float(value)
     return "{:,.2f}".format(value)
 
+"""
 @register.filter
 def format_date(value):
     date_obj = datetime.strptime(str(value), "%Y-%m-%d")
@@ -30,3 +31,4 @@ def format_date(value):
     suffix = "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
     formatted_date = date_obj.strftime(f"%B {day}{suffix}, %Y")
     return formatted_date
+"""

@@ -81,16 +81,35 @@ function renameCategorySubmit(button, categoryID, transactionType) {
         var transactions = document.querySelectorAll('[name="transactions"]'); // select the rows
 
         transactions.forEach((row) => {  // for each
+            const firstColumn = row.children[0];  // get the first column
+            const hiddenLabel = firstColumn.querySelector('label[hidden]');  // Get the hidden label element
+
+            // Retrieve the text inside the hidden label
+            const hiddenText = hiddenLabel ? hiddenLabel.textContent : null;  // If label exists, get the text content
+            
+
             const secondColumn = row.children[1]; // we need the second columm as that's where the category name is
             const span = secondColumn.querySelector('span'); // only get the span, with the name, not the options
-        
-            if (span.textContent.trim() === oldName) {  // if it's the same name, rename it
+            if (span.textContent.trim() === oldName && transactionType === hiddenText) {  // if it's the same name, rename it
                 span.textContent = categoryName;
             }
         });
 
+        // this is for renaming the categories within filter transactions 
+        var filterCategories = getAllCategoryCheckboxes();
+        filterCategories.forEach(category => {
+            var categorySplit = category.id.split("-");  // split into the category name, transactionType, and 'filter'
+            const label = category.nextElementSibling;  // get the label that goes with the category
+            if(categorySplit[0] === oldName && categorySplit[1] === transactionType){  // make sure it's also the right transaction type
+                category.id = `${categoryName}-${transactionType}-filter`;  // info is like the others
+                category.value = `${categoryName}-${transactionType}-filter`;
+                label.textContent = categoryName;
+                label.setAttribute('for', `${categoryName}-${transactionType}-filter`);
+            }
+        });
 
-        // AJAX
+
+        // AJAX, done to be more dynamic with no reload
         fetch(`/rename_category/${categoryID}/`, {
             method: "POST",
             headers: {
@@ -108,57 +127,73 @@ function deleteCategory(categoryID, categoryName, transactionType){
     showConfirmationModal("N/A", "Are you sure that you would like to delete this category? All transactions with it will default to 'No Category'")
         .then(proceed => {
             if(proceed) {
+                // remove it 
                 var category = document.getElementById(`category-${categoryID}`);
-                category.classList.add('fadeOut');
-                
-                // Wait for the fade-out animation to finish (3 seconds in this case)
-                setTimeout(function() {
-                  category.remove(); // Remove the element after animation is complete
-                }, 2000); // Time in milliseconds (3 seconds = 3000 ms)
+                category.remove() 
 
-                if (transactionType === "income_source"){
-                    var CategoryDropdown = document.getElementById('income_category');
+                // remove it from all sources
+
+                // this removes it from the category dropdown for adding a transaction
+                if (transactionType === "income_source"){  // get the correct dropdown
+                    var categoryDropdown = document.getElementById('income_category');
                 } else{
-                    var CategoryDropdown = document.getElementById('expense_category');
+                    var categoryDropdown = document.getElementById('expense_category');
                 }
 
-                for (let i = 0; i < CategoryDropdown.options.length; i++) {
-                    if (CategoryDropdown.options[i].textContent === categoryName) {
-                        if (CategoryDropdown.options[i].selected){
-                            CategoryDropdown.selectedIndex = 0;
+                for (let i = 0; i < categoryDropdown.options.length; i++) {  // loop through the category dropdown
+                    if (categoryDropdown.options[i].textContent === categoryName) {
+                        if (categoryDropdown.options[i].selected){
+                            categoryDropdown.selectedIndex = 0;  // if it's selected, put the current option at the first
                         }
-                        CategoryDropdown.remove(i);  // Remove the option
-                        break;  // Exit the loop once the option is found and removed
+                        categoryDropdown.remove(i);  // remove the option
+                        break;  // exit the loop once the option is found and removed as it would only occur once
                     }
                 }
-
-                if(transactionType === "income_source"){
-                    var categories = document.querySelectorAll('[name="income-categories-for-edit-transaction"]'); // Select elements by name attribute
+                
+                // these lines remove it from the dropdown for each transaction
+                if(transactionType === "income_source"){  // get each transaction
+                    var categoryDropdowns = document.querySelectorAll('[name="income-categories-for-edit-transaction"]'); 
                 }
                 else{
-                    var categories = document.querySelectorAll('[name="expense-categories-for-edit-transaction"]'); // Select elements by name attribute
+                    var categoryDropdowns = document.querySelectorAll('[name="expense-categories-for-edit-transaction"]');
                 }
 
-                categories.forEach((selectElement) => {
-                    const options = selectElement.options;
+                // loop through 
+                categoryDropdowns.forEach((selectElement) => {
+                    const options = selectElement.options;  // get the categories
                     for (let i = 0; i < options.length; i++) {
-                        if(options[i].value === categoryName){
+                        if(options[i].value === categoryName){  // remove it 
                             selectElement.remove(i);
                         }
                     }
                 });
 
-                var transactions = document.querySelectorAll('[name="transactions"]'); // Select all rows with name="transactions"
+                // these lines make it so that if the current category is the deleted category, it goes to no category
+                var transactions = getAllTransactions() // get all transactions, including new ones
 
                 transactions.forEach((row) => {
                     const secondColumn = row.children[1]; // we need the second columm as that's where the category name is
                     const span = secondColumn.querySelector('span'); // only get the span, with the name, not the options
-                
                     if (span.textContent.trim() === categoryName) {
                         span.textContent = "No Category";
                     }
                 });
 
+                // delete the transaction from filter transactions
+                var filterCategories = getAllCategoryCheckboxes();
+                filterCategories.forEach(category => {
+                    var categorySplit = category.id.split("-");  // split it on name, type, and 'filter'
+                    const label = category.nextElementSibling;  // get the corresponding label
+
+                    if(categorySplit[0] === categoryName && categorySplit[1] === transactionType){
+                        category.remove();  // remove both 
+                        label.remove();
+                    }
+                });
+                toggleNoCategoryFilter();  // show No Category for filtering if needed 
+
+
+                // send the AJAX request. It's done after everything to make it more dynamic
                 fetch(`/delete_category/${categoryID}/`, {
                     method: "POST",
                     headers: {

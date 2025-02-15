@@ -1,18 +1,20 @@
+
+// whenever a new transaction is made, this will run
 document.getElementById("transaction-form").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent the default form submission
+    event.preventDefault(); // prevent is from being submitted. The form will be submitted with an AJAX request
 
-    let formData = new FormData(this);
-
+    let formData = new FormData(this); // get the form data
     
+    // reset the form. We can do this as all the input validation was already done before this point
     document.getElementById("transaction-form").reset();
     document.getElementById("add_transaction_income_categories").style.display = "none"
     document.getElementById("add_transaction_expense_categories").style.display = "none"
 
     autofillDate();
 
-    // Determine transaction type and category
+    // get the transaction information
     let transactionType = formData.get("transaction_type");
-    let transactionCategory = transactionType === "income_source" 
+    let transactionCategory = transactionType === "income_source" // get what is needed
         ? formData.get("income_category") 
         : formData.get("expense_category");
 
@@ -20,17 +22,19 @@ document.getElementById("transaction-form").addEventListener("submit", function(
     let transactionDate = formData.get("transaction_date");
     let transactionAmount = formData.get("transaction_amount");
 
-    let income_categories = formData.get("hidden_income_categories");
+    // we need these so we can put them in the edit transaction mode later on
+    let income_categories = formData.get("hidden_income_categories");  // get the hidden categories
     let expense_categories = formData.get("hidden_expense_categories");
 
     income_categories = income_categories.split(', ').map(item => item.replace(/['\[\]]/g, '').trim());
     expense_categories = expense_categories.split(', ').map(item => item.replace(/['\[\]]/g, '').trim());
 
-    // Create a temporary row with disabled buttons
+    // create a transaction row that will be displayed while the AJAX request is being made. We can't display the final thing as we need the ID
     let tempRow = document.createElement("tr");
     tempRow.id = "temp-row";
-    tempRow.className = transactionType === "income_source" ? "green" : "red";
+    tempRow.className = transactionType === "income_source" ? "green" : "red";  // determine the color
     
+    // the user will be unable to use the buttons for a few seconds as the AJAX request is being made
     tempRow.innerHTML = `
         <td>
             <label hidden>${transactionType}</label>
@@ -53,10 +57,12 @@ document.getElementById("transaction-form").addEventListener("submit", function(
         </td>
     `;
     
-    // Add the temporary row to the table
+    // add the temporary row to the table, needed for it to appear
     document.querySelector("table tbody").appendChild(tempRow);
+    sortTransactions(); // filter and sort with the new row. Must be called again after the tempRow is deleted
+    filterTransactions();
 
-    // Send the AJAX request
+    // send the AJAX request
     fetch("/add_transaction/", {
         method: 'POST',
         headers: {
@@ -66,16 +72,17 @@ document.getElementById("transaction-form").addEventListener("submit", function(
     })
     .then(response => response.json())
     .then(data => {
-        // After the transaction has been added, remove the temporary row
+        // we can now remove the temp row
         const tempRow = document.getElementById("temp-row");
-        if (tempRow) tempRow.remove();
+        tempRow.remove();
 
-        // Create a new row with the actual transaction data
+        // real transaction can be made with the id
         let newRow = document.createElement("tr");
         newRow.id = `transaction-id-${data.transactionId}`;
         newRow.className = transactionType === "income_source" ? "green" : "red";
 
-        // Dynamically build the income and expense category options
+        // make the income and expense options here (only one will be shown).
+        // this must be done because the logic of the django template can not be replicated in js
         let incomeOptions = income_categories.map(category => 
             `<option value="${category}" ${category === transactionCategory ? 'selected' : ''}>
                 ${category}
@@ -88,6 +95,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
             </option>`
         ).join('');
 
+        // select the correct options. the formattedType is needed as in some places, income is used instead of income_source
         if (transactionType === "income_source") {
             var options = incomeOptions;
             var formattedType = "income";
@@ -97,7 +105,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
         }
 
 
-        // Build the new row's HTML
+        // we can now make the new row, similar to how it is for the other transactions
         newRow.innerHTML = `
         <td>
             <label hidden>${transactionType}</label>
@@ -129,53 +137,58 @@ document.getElementById("transaction-form").addEventListener("submit", function(
         </td>
     `;
 
-        // Append the new row to the table body
+        // append the new row to the table and make it appear
         document.querySelector("table tbody").appendChild(newRow);
-        updateCurrentBalance();
 
-        // Reset the form fields
+        // we must filter and sort the transactions again as we deleted the old row
+        filterTransactions();
+        sortTransactions();
 
     })
 });
 
 
 function toggleCategoryDivs() {
+    /* This determines which dropdown, if any, will be shown on add transaction */
+
+    // get the entire div
     var incomeCategoriesDiv = document.getElementById('add_transaction_income_categories');
     var expenseCategoriesDiv = document.getElementById('add_transaction_expense_categories');
+    
+    // get only the options
     var incomeSelect = incomeCategoriesDiv.querySelector('select');
     var expenseSelect = expenseCategoriesDiv.querySelector('select');
 
     if (document.getElementById('income_source').checked) {
         incomeCategoriesDiv.style.display = 'block';
         expenseCategoriesDiv.style.display = 'none';
-        // Make the income category select required
-        incomeSelect.setAttribute('required', 'true');
-        expenseSelect.removeAttribute('required');
+        incomeSelect.setAttribute('required', 'true');  // make it required
+        expenseSelect.removeAttribute('required');  // stop the invisible one from being required
     } else if (document.getElementById('expense').checked) {
         expenseCategoriesDiv.style.display = 'block';
         incomeCategoriesDiv.style.display = 'none';
-        // Make the expense category select required
-        expenseSelect.setAttribute('required', 'true');
-        incomeSelect.removeAttribute('required');
+        expenseSelect.setAttribute('required', 'true');  // make it required
+        incomeSelect.removeAttribute('required');  // stop the invisible one from being required
     }
 }
 
 function autofillDate() {
+    /* This fills the date input with the current date in the add transactions menu. Called after each transaction is added and on page refresh */
     var today = new Date();
     var day = today.getDate();
-    var month = today.getMonth() + 1; // Months are zero-based, so we add 1
+    var month = today.getMonth() + 1; // months are zero-based, so we add 1
     var year = today.getFullYear();
 
-    // Format the date as YYYY-MM-DD (the format required for the <input type="date"> field)
+    // format the date as YYYY-MM-DD (the format required for the <input type="date"> field)
     if (day < 10) {
-        day = '0' + day; // Ensure the day is two digits
+        day = '0' + day; // ensure the day is two digits
     }
     if (month < 10) {
-        month = '0' + month; // Ensure the month is two digits
+        month = '0' + month; // ensure the month is two digits
     }
 
-    var formattedDate = year + '-' + month + '-' + day;
+    var formattedDate = `${year}-${month}-${day}`;
 
-    // Set the value of the date input
+    // set the value of the date input
     document.getElementById('transaction-date').value = formattedDate;
 }

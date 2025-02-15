@@ -44,8 +44,11 @@
             <button type="submit" class="btn btn-primary btn-sm" style="font-size: 18px; padding: 5px 10px;">Add Category</button>
         </div>
     </form>
-    <p id="error-message-{{var_transation_type}}" class="error-text" style="display: none;">
+    <p id="error-message-category-taken-{{var_transation_type}}" class="error-text" style="display: none;">
         Category name already taken!
+      </p>
+      <p id="error-message-invalid-category-{{var_transation_type}}" class="error-text" style="display: none;">
+        Category name not allowed!
       </p>
     </div>
 
