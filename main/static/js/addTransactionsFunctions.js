@@ -60,6 +60,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
     // add the temporary row to the table, needed for it to appear
     document.querySelector("table tbody").appendChild(tempRow);
     sortTransactions(); // filter and sort with the new row. Must be called again after the tempRow is deleted
+    // toggleCurrentBalance();
     filterTransactions();
 
     // send the AJAX request
@@ -141,6 +142,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
         document.querySelector("table tbody").appendChild(newRow);
 
         // we must filter and sort the transactions again as we deleted the old row
+       // toggleCurrentBalance();
         filterTransactions();
         sortTransactions();
 

@@ -60,3 +60,13 @@ function getAllCategoryCheckboxes() {
     // return the categories array, including both old and new checkboxes
     return categories;
 }
+
+function getAllVisibleTransactions() {
+    /* This returns only the transactions currently on screen */
+    let transactions = getAllTransactions()
+    transactions = transactions.filter(transaction => {
+        const display = window.getComputedStyle(transaction).display;
+        return display !== "none";  // Keep only elements that are not "none"
+    });
+    return transactions
+}

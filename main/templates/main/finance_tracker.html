@@ -9,6 +9,7 @@ Finance Tracker
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/financeTrackerStyles.css' %}">
+
 {% endblock %}
 
 <div id="content">
@@ -254,8 +255,11 @@ Finance Tracker
     </div>
     
     <!-- Right Section (75%) -->
-    <div class="col-md-9">
-        <div class="bg-light p-4 rounded shadow-sm">
+
+    <div class="col-md-9 bg-light p-4 rounded shadow-sm">
+        <button class="btn btn-primary btn-sm me-2" id="toggle-view-all">View All Transactions</button>
+        <button class="btn btn-secondary btn-sm" id="toggle-view-summaries">View Summaries</button>
+        <div id="view-all-transactions" style="display: block;">
             <div style="margin-bottom: 15px;">
                 <label for="transaction-search">Search Transactions:</label>
                 <input type="text" id="transaction-search" class="form-control" placeholder="Search transactions by name">
@@ -330,6 +334,66 @@ Finance Tracker
                 </tbody>
             </table>
         </div>
+        <div id="view-summaries" style="display: none;">
+            <h2>View Summaries</h2>
+
+            <h4>Type</h4>
+            <form class="d-flex gap-3" style="justify-content: center;">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="summaryType" id="weekly" value="weekly" checked>
+                    <label class="form-check-label" for="weekly">Weekly</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="summaryType" id="monthly" value="monthly">
+                    <label class="form-check-label" for="monthly">Monthly</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="summaryType" id="annually" value="annually">
+                    <label class="form-check-label" for="annually">Annually</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="summaryType" id="custom" value="custom">
+                    <label class="form-check-label" for="custom">Custom</label>
+                </div>
+            </form>
+            <div id="custom-options" style="display: none; flex-direction: column; align-items: center; text-align: center; margin-top: 20px;">
+                <label for="custom-value">Enter value:</label>
+                <input type="number" id="custom-value" min="1" placeholder="Enter number" style="margin-right: 10px;">
+            
+                <select id="custom-unit">
+                    <option value="day">Days</option>
+                    <option value="month">Months</option>
+                    <option value="year">Years</option>
+                </select>
+            
+                <input type="date" id="custom-date" style="margin-top: 10px; display: block;">
+                <h6>The Start date is when values would start. For example, a date of 2/16/25 with a 14 day cycle would have one cycle be 2/16 to 3/1 and another be 2/2 to 2/15 (Dates before the start date work fine)</h6>
+            </div>
+            
+            <h5 style="margin-top: 20px;">Combine these with the filtering on the left to form whatever you need</h5>
+
+            <h2 id="noSummariesText" style="display: none;">No Summaries Found. Please change your summary settings, add some transations, or change your filters</h2>
+
+            <table id="summariesTable">
+                <thead>
+                    <tr>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Net Amount ($)</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+        <div id="export-options" style="margin-top: 20px;">
+            <button class="btn btn-danger btn-sm me-2" id="export-to-pdf">Export to PDF</button>
+            <button class="btn btn-success btn-sm me-2" id="export-to-google-sheets">Export to Google Sheets</button>
+            <button class="btn btn-warning btn-sm" id="export-to-excel">Export to Excel</button>
+        </div>
+        
     </div>
 </div>
 
@@ -349,10 +413,71 @@ Finance Tracker
     <script src="{% static 'js/sortTransactions.js' %}"></script>
     <script src="{% static 'js/getCSRFToken.js' %}"></script>
     <script src="{% static 'js/getAllItemsFunctions.js' %}"></script>
+    <script src="{% static 'js/createSummariesFunctions.js' %}"></script>
+    <script src="{% static 'js/outputReportsFunctions.js' %}"></script>
 {% endblock %}
 
 {% include 'main/modal_confirmation.html' %}
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewAllButton = document.getElementById('toggle-view-all');
+        const viewSummariesButton = document.getElementById('toggle-view-summaries');
+        const viewAllSection = document.getElementById('view-all-transactions');
+        const viewSummariesSection = document.getElementById('view-summaries');
+
+        // Event listener for "View All Transactions" button
+        viewAllButton.addEventListener('click', function() {
+            viewAllSection.style.display = 'block';
+            viewSummariesSection.style.display = 'none';
+            viewAllButton.classList.add('btn-primary');
+            viewAllButton.classList.remove('btn-secondary');
+            viewSummariesButton.classList.add('btn-secondary');
+            viewSummariesButton.classList.remove('btn-primary');
+        });
+
+        // Event listener for "View Summaries" button
+        viewSummariesButton.addEventListener('click', function() {
+            viewAllSection.style.display = 'none';
+            viewSummariesSection.style.display = 'block';
+            viewSummariesButton.classList.add('btn-primary');
+            viewSummariesButton.classList.remove('btn-secondary');
+            viewAllButton.classList.add('btn-secondary');
+            viewAllButton.classList.remove('btn-primary');
+        });
+    });
+
+    const customRadioButton = document.getElementById('custom');
+    const customOptions = document.getElementById('custom-options');
+
+    // Show the custom input section when 'Custom' is selected
+    customRadioButton.addEventListener('change', () => {
+        if (customRadioButton.checked) {
+            customOptions.style.display = 'flex'; // Show custom options
+        } else {
+            customOptions.style.display = 'none'; // Hide custom options when other radio is selected
+        }
+    });
+
+    // Handle other radio button selections (optional)
+    const weeklyRadioButton = document.getElementById('weekly');
+    const monthlyRadioButton = document.getElementById('monthly');
+    const annuallyRadioButton = document.getElementById('annually');
+
+    // Add event listeners to hide custom options when other types are selected
+    weeklyRadioButton.addEventListener('change', () => {
+        customOptions.style.display = 'none';
+    });
+    monthlyRadioButton.addEventListener('change', () => {
+        customOptions.style.display = 'none';
+    });
+    annuallyRadioButton.addEventListener('change', () => {
+        customOptions.style.display = 'none';
+    });
+
+
+
+</script>
 
 <script>
     window.onload = function() {

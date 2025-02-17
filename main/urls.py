@@ -19,4 +19,5 @@ urlpatterns = [
     path('delete_transaction/<int:transaction_id>/', views.delete_transaction, name='delete_transaction'),
     path('delete_mass_transactions/', views.delete_mass_transactions, name='delete_mass_transactions'),
     path('update_transaction/<int:transaction_id>/', views.update_transaction, name='update_transaction'),
+   # path('export_to_pdf/', views.export_to_pdf, name='export_to_pdf'),
 ]

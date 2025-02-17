@@ -1,3 +1,10 @@
+document.addEventListener("DOMContentLoaded", function () {
+    // whenever the radio for sorting changes
+    document.querySelectorAll('input[name="transactionSort"]').forEach((radio) => {
+        radio.addEventListener('change', sortTransactions);
+    });
+});
+
 function sortTransactions() {
     // this function sorts the transactions 
 

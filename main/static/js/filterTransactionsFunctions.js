@@ -4,19 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .forEach(input => {
             input.addEventListener("change", filterTransactions);
         });
-    // whenever the radio for sorting changes
-    document.querySelectorAll('input[name="transactionSort"]').forEach((radio) => {
-        radio.addEventListener('change', sortTransactions);
-    });
 });
 
-
-function filterTransactions() {
-    toggleCategoryState();  // toggle whether or not checkboxes are greyed out based on whether or not income/expense is selected to be shown
-    toggleNoCategoryFilter();  // determine if no category should be shown
-    var isError = false;  // if there's an error, don't shown anything
-
-    // get the two checkboxes for income and expense
+function getCheckedTransactionTypes() {
     const transactionTypeCheckboxes = document.querySelectorAll('input[name="transactionTypeFilter"]');
     let selectedTypes = [];  
     transactionTypeCheckboxes.forEach(checkbox => {
@@ -24,7 +14,10 @@ function filterTransactions() {
             selectedTypes.push(checkbox.value);  // add the value to the array
         }
     });
+    return selectedTypes;
+}
 
+function getCheckedCategories() {
     const categoryCheckboxes = getAllCategoryCheckboxes();  // get all categories, including newly created ones
     let selectedCategories = [];
     categoryCheckboxes.forEach(checkbox => {
@@ -32,6 +25,18 @@ function filterTransactions() {
             selectedCategories.push(checkbox.value);  // if a valid category, add it to the array
         }
     });
+    return selectedCategories;
+}
+
+function filterTransactions() {
+    toggleCategoryState();  // toggle whether or not checkboxes are greyed out based on whether or not income/expense is selected to be shown
+    toggleNoCategoryFilter();  // determine if no category should be shown
+    var isError = false;  // if there's an error, don't shown anything
+
+    // get the two checkboxes for income and expense
+    selectedTypes = getCheckedTransactionTypes();
+    selectedCategories = getCheckedCategories();
+
 
     let startDate, endDate;
 
@@ -39,6 +44,8 @@ function filterTransactions() {
     if (dateToggle.checked) {
         startDate = document.getElementById('start-date').value;  // get the start and end dates
         endDate = document.getElementById('end-date').value;
+
+        // console.log(startDate, endDate)
         
         // check if the dates are valid. If an invalid date (ex. 04-31-2025), the date will be empty
         if (endDate >= startDate && startDate != "" && endDate != "") {
@@ -139,7 +146,7 @@ function filterTransactions() {
         document.getElementById('noTransactionsText').style.display = "none";
         document.getElementById("transactionsTable").style.display = "table";
     }
-
+    createSummaries();
     updateCurrentBalance();  // update the balance with the new transactions. The Balance only reflects transactions on the screen
 }
 
@@ -238,7 +245,6 @@ function resetFilters() {
     filterTransactions();  // undo the filters and sorts
     sortTransactions();
 }
-
 
 
 function toggleNoCategoryFilter(){

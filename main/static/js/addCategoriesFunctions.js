@@ -31,7 +31,7 @@ forms.forEach(form => { // get the event listener for both forms
         // the errors are named with the transaction type as they must be unique for the transaction type
         if (categoryNames.includes(categoryName)) {  // if the category name is found, display the error and don't proceed
             document.getElementById(`error-message-category-taken-${transactionType}`).style.display = "block";
-        } else if (categoryName === "No Category") {  // edge case, the user can't add a category called "No Category"
+        } else if (categoryName === "No Category" || categoryName === "None") {  // edge case, the user can't add a category called "No Category"
             document.getElementById(`error-message-invalid-category-${transactionType}`).style.display = "block"; // show the error message
         } else { 
             document.getElementById(`error-message-category-taken-${transactionType}`).style.display = "none"; // hide the error message 

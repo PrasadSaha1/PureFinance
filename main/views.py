@@ -241,12 +241,6 @@ def update_transaction(request, transaction_id):
     if request.method == 'POST':
         data = json.loads(request.body)
         transaction = Transaction.objects.get(id=transaction_id)
-        print(transaction.transaction_type)
-
-        for category in TransactionCategory.objects.all():
-            print(category.transaction_type, category.category_name)
-            if transaction.transaction_type == category.transaction_type:
-                print("yes")
 
         category = TransactionCategory.objects.get(user=request.user, category_name=data.get('category'), transaction_type=transaction.transaction_type)
 
@@ -257,3 +251,4 @@ def update_transaction(request, transaction_id):
 
         transaction.save()
         return JsonResponse({'success': True})
+
