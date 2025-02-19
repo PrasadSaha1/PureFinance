@@ -7,10 +7,9 @@
 Finance Tracker
 {% endblock %}
 
-{% block head %}
+{% block htmlhead %}
 <link rel="stylesheet" href="{% static 'css/financeTrackerStyles.css' %}">
-
-{% endblock %}
+{% endblock htmlhead %}
 
 <div id="content">
     {% block content %}
@@ -420,63 +419,7 @@ Finance Tracker
 {% include 'main/modal_confirmation.html' %}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const viewAllButton = document.getElementById('toggle-view-all');
-        const viewSummariesButton = document.getElementById('toggle-view-summaries');
-        const viewAllSection = document.getElementById('view-all-transactions');
-        const viewSummariesSection = document.getElementById('view-summaries');
-
-        // Event listener for "View All Transactions" button
-        viewAllButton.addEventListener('click', function() {
-            viewAllSection.style.display = 'block';
-            viewSummariesSection.style.display = 'none';
-            viewAllButton.classList.add('btn-primary');
-            viewAllButton.classList.remove('btn-secondary');
-            viewSummariesButton.classList.add('btn-secondary');
-            viewSummariesButton.classList.remove('btn-primary');
-        });
-
-        // Event listener for "View Summaries" button
-        viewSummariesButton.addEventListener('click', function() {
-            viewAllSection.style.display = 'none';
-            viewSummariesSection.style.display = 'block';
-            viewSummariesButton.classList.add('btn-primary');
-            viewSummariesButton.classList.remove('btn-secondary');
-            viewAllButton.classList.add('btn-secondary');
-            viewAllButton.classList.remove('btn-primary');
-        });
-    });
-
-    const customRadioButton = document.getElementById('custom');
-    const customOptions = document.getElementById('custom-options');
-
-    // Show the custom input section when 'Custom' is selected
-    customRadioButton.addEventListener('change', () => {
-        if (customRadioButton.checked) {
-            customOptions.style.display = 'flex'; // Show custom options
-        } else {
-            customOptions.style.display = 'none'; // Hide custom options when other radio is selected
-        }
-    });
-
-    // Handle other radio button selections (optional)
-    const weeklyRadioButton = document.getElementById('weekly');
-    const monthlyRadioButton = document.getElementById('monthly');
-    const annuallyRadioButton = document.getElementById('annually');
-
-    // Add event listeners to hide custom options when other types are selected
-    weeklyRadioButton.addEventListener('change', () => {
-        customOptions.style.display = 'none';
-    });
-    monthlyRadioButton.addEventListener('change', () => {
-        customOptions.style.display = 'none';
-    });
-    annuallyRadioButton.addEventListener('change', () => {
-        customOptions.style.display = 'none';
-    });
-
-
-
+ 
 </script>
 
 <script>
@@ -490,6 +433,7 @@ Finance Tracker
     
 </script>
 
+<!--
 <style>
     h1, h2, h3, h4, h5, h6, p {
     text-align: center;
@@ -613,5 +557,5 @@ table {
     background-color: #f1a7ac;  /* Darker red on hover */
 }
 </style>
-
+-->
 {% endblock %}
