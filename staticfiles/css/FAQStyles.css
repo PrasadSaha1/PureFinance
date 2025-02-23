@@ -1,0 +1,3 @@
+body, html {
+    margin-top: -30px;  /* for some reason, probably related to bootstrap 5, there was a small margin at the top before*/
+}

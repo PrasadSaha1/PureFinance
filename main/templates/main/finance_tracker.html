@@ -14,19 +14,54 @@ Finance Tracker
 <div id="content">
     {% block content %}
     <h1>Finance Tracker</h1>
-    <div class="bg-light p-4 rounded shadow-sm">
-        {% if message %}
-            {% if is_error %}
-                <div class="alert alert-danger" role="alert">
-                    {{ message }}
+
+    <div class="d-flex justify-content-center">
+        <div class="bg-light p-4 rounded shadow-sm text-center" >
+
+            <!--
+            <form id="initialBalanceForm" style="display: none">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <label for="balanceAmount" class="form-label mb-0 me-2" style="margin-right: 10px;">Balance: </label>
+                    <input type="number" id="balanceAmount" name="amount" class="form-control text-center" 
+                        style="width: 120px; padding: 5px;" oninput=validatePositiveNumber(this) required>
+    
+                    <div class="ms-3" style="margin-left: 10px;">
+                        <input type="radio" id="positive" name="balance_type" value="positive" checked>
+                        <label for="positive">+</label>
+                        
+                        <input type="radio" id="negative" name="balance_type" value="negative" class="ms-2">
+                        <label for="negative">−</label>
+                    </div>
                 </div>
-            {% else %}
-                <div class="alert alert-success" role="alert">
-                    {{ message }}
+    
+                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                <div id="balanceMessage" class="mt-3">It is recommended to fill in your net worth before your start using the finance tracker. <br>Be sure to indicate whether your net worth is positive or negative. </div>
+            </form>
+        -->
+        <div id="viewInitialBalance">
+            <h4><strong>Initial Balance: </strong>
+                <span id="initialBalance" class="balance-text">${{ initial_balance|format_money }}</span>
+                <input type="number" id="initialBalanceInput" class="form-control form-control-sm d-none" value="{{ initial_balance }}" step="0.01" style="width: 150px; display: inline-block;">
+                
+                <button id="editInitialBalanceBtn" class="btn btn-primary btn-sm ms-2 edit-mode-initial-balance">Edit</button>
+                <button id="cancelInitialBalanceBtn" class="btn btn-secondary btn-sm ms-2 d-none">Cancel</button>
+            </h4>
+                <!-- Radio buttons for Positive/Negative -->
+                <div id="balanceSignOptions" class="d-none">
+                    <input type="radio" id="positiveBalance" name="balanceSign" value="positive" checked> Positive
+                    <input type="radio" id="negativeBalance" name="balanceSign" value="negative"> Negative
                 </div>
-            {% endif %}
-        {% endif %}
         
+
+        </div>
+        
+        <div id="initialBalanceMessage" class="mt-3">It is recommended to fill in your net worth before your start using the finance tracker. <br>You can do this by clicking "Edit". <br>Be sure to indicate whether your net worth is positive or negative (meaning that you're in debt). </div>
+
+        </div>
+    </div>
+    
+    
+    <div class="bg-light p-4 rounded shadow-sm mt-4">
         <h2 style="margin-bottom: 20px;">Transaction Categories</h2>
         <div id="categories">
             <h5 style="margin-bottom: 30px;">These are the categories for your transactions, useful for identifying trends.</h5>
@@ -49,7 +84,7 @@ Finance Tracker
                 <div class="col-md-4">
                     <div class="d-flex justify-content-between">
                         <div class="form-check me-4">
-                            <input type="radio" id="income_source" name="transaction_type" value="income_source" onclick="toggleCategoryDivs()" required class="form-check-input">
+                            <input type="radio" id="income_source" name="transaction_type" value="income_source" onclick="toggleCategoryDivs()" required class="form-check-input" checked>
                             <label for="income_source" class="form-check-label fs-5">Income</label>
                         </div>
                         <div class="form-check ms-4">
@@ -60,55 +95,59 @@ Finance Tracker
                 </div>
             </div>
 
-<div class="row justify-content-center g-4">
-            <div class="col-md-4" id="add_transaction_income_categories" style="display: none;">
-                <label for="income_category" class="form-label">Income Category</label>
-                <select id="income_category" name="income_category" class="form-select" required>
-                    <option value="" disabled selected>Select Category</option>
-                    {% for category in income_categories %}
-                        <option value="{{category.category_name}}">{{category.category_name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-4" id="add_transaction_expense_categories" style="display: none;">
-                <label for="expense_category" class="form-label">Expense Category</label>
-                <select id="expense_category" name="expense_category" class="form-select" required>
-                    <option value="" disabled selected>Select Category</option>
-                    {% for category in expense_categories %}
-                        <option value="{{category.category_name}}">{{category.category_name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-            <!-- New row for Name, Date, and Amount fields -->
-            <div class="row justify-content-center g-3">
-                <div class="col-md-3">
-                    <label for="transaction-name" class="form-label">Name</label>
-                    <input type="text" id="transaction-name" name="transaction_name" class="form-control" placeholder="e.g. New Computer" required maxlength="50" pattern="^[A-Za-z0-9 ]*$">
+            <div id="addTransactionSettings">
+                <div class="row justify-content-center g-4">
+                    <div class="col-md-4" id="add_transaction_income_categories" style="display: none;">
+                        <label for="income_category" class="form-label">Income Category</label>
+                        <select id="income_category" name="income_category" class="form-select" required>
+                            <option value="" disabled selected>Select Category</option>
+                            {% for category in income_categories %}
+                                <option value="{{category.category_name}}">{{category.category_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4" id="add_transaction_expense_categories" style="display: none;">
+                        <label for="expense_category" class="form-label">Expense Category</label>
+                        <select id="expense_category" name="expense_category" class="form-select" required>
+                            <option value="" disabled selected>Select Category</option>
+                            {% for category in expense_categories %}
+                                <option value="{{category.category_name}}">{{category.category_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label for="transaction-date" class="form-label">Date</label>
-                    <input type="date" id="transaction-date" name="transaction_date" class="form-control" min="1900-01-01" max="2100-12-31" required>
-                </div>
-                <div class="col-md-3">
-                    <label for="transaction-amount" class="form-label">Amount</label>
-                    <input type="number" id="transaction-amount" name="transaction_amount" class="form-control" placeholder="e.g., 1000" step="0.01" min="0" oninput=validatePositiveNumber(this) required>
-                </div>
-            </div>
+                    <div class="row justify-content-center g-3">
+                        <div class="col-md-3">
+                            <label for="transaction-name" class="form-label">Name</label>
+                            <input type="text" id="transaction-name" name="transaction_name" class="form-control" placeholder="e.g. New Computer" required maxlength="50" pattern="^[A-Za-z0-9 ]*$">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="transaction-date" class="form-label">Date</label>
+                            <input type="date" id="transaction-date" name="transaction_date" class="form-control" min="1900-01-01" max="2100-12-31" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="transaction-amount" class="form-label">Amount</label>
+                            <input type="number" id="transaction-amount" name="transaction_amount" class="form-control" placeholder="e.g., 1000" step="0.01" min="0" oninput=validatePositiveNumber(this) required>
+                        </div>
+                    </div>
 
-            <input type="hidden" id="hidden-income-categories" name="hidden_income_categories" value="{{income_category_names}}">
-            <input type="hidden" id="hidden-expense-categories" name="hidden_expense_categories" value="{{expense_category_names}}">
+                    <input type="hidden" id="hidden-income-categories" name="hidden_income_categories" value="{{income_category_names}}">
+                    <input type="hidden" id="hidden-expense-categories" name="hidden_expense_categories" value="{{expense_category_names}}">
 
-            <!-- Centered Button -->
-            <div class="row justify-content-center m-3">
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Add</button>
-                </div>
+                    <!-- Centered Button -->
+                    <div class="row justify-content-center m-3">
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">Add</button>
+                        </div>
+                    </div>
+                <p style="font-size: 18px; margin-top: 20px;">Transaction names may not exceed 50 characters or contain special symbols.<br>Amounts must be positive.</p>
             </div>
+            <h3 id="noIncomeCategoriesAddTransaction" style="display: none;">Add some income categories above before making transactions</h3>
+            <h3 id="noExpenseCategoriesAddTransaction" style="display: none;">Add some expense categories above before making transactions</h3>
         </form>
+
     
         <!-- Success/Error Message Display -->
-        <p style="font-size: 18px; margin-top: 20px;">Transaction names may not exceed 50 characters or contain special symbols.<br>Amounts must be positive.</p>
     </div>
     
     
@@ -124,6 +163,10 @@ Finance Tracker
     <div class="col-md-3">
         <div class="bg-light p-4 rounded shadow-sm">
             <h2>Filter transactions</h2>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="includeInitialBalance" id="include-initial-balance" value="include-initial-balance" checked>
+                <label class="form-check-label" for="include-initial-balance">Include Initial Balance</label>
+            </div>
             <div>
                 <strong>Transaction Type</strong>
                 <div class="form-check">
@@ -268,6 +311,9 @@ Finance Tracker
             <h3>Current Balance: $<span id="current-balance" class="current-balance"></span></h3>
             <h6>The above balance will be based on filters</h6>
             <h6 style="margin-bottom: 20px;">Click Reset All under the filters to reset the filters and restore the current balance</h6>
+            
+            <h6 id="initialBalanceDisplayInTransactions">The Initial Balance was ${{initial_balance|format_money}}. </h6>
+            <h6 style="margin-bottom: 30px;">Selecting the "Include Initial Balance" filter will include this into the current balance.</h6>
 
             <h2 id="noTransactionsText" style="display: none;">No Transactions found. Please add some or change your filters</h2>
 
@@ -356,17 +402,22 @@ Finance Tracker
                 </div>
             </form>
             <div id="custom-options" style="display: none; flex-direction: column; align-items: center; text-align: center; margin-top: 20px;">
-                <label for="custom-value">Enter value:</label>
-                <input type="number" id="custom-value" min="1" placeholder="Enter number" style="margin-right: 10px;">
-            
-                <select id="custom-unit">
-                    <option value="day">Days</option>
-                    <option value="month">Months</option>
-                    <option value="year">Years</option>
-                </select>
-            
-                <input type="date" id="custom-date" style="margin-top: 10px; display: block;">
-                <h6>The Start date is when values would start. For example, a date of 2/16/25 with a 14 day cycle would have one cycle be 2/16 to 3/1 and another be 2/2 to 2/15 (Dates before the start date work fine)</h6>
+                <div style="display: flex; align-items: center;">
+                    <label for="custom-value" style="margin-right: 10px;">Enter Summary Size:</label>
+                    <input type="number" id="custom-value" min="1" placeholder="Enter number" style="margin-right: 10px;">
+                    
+                    <select id="custom-unit" style="margin-right: 10px;">
+                        <option value="day">Days</option>
+                        <option value="month">Months</option>
+                        <option value="year">Years</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <label for="custom-date" style="margin-right: 10px;">Enter Reference Date:</label>
+                    <input type="date" id="custom-date">
+                </div>  
+                
+                <h6>The reference date is when values would start. For example, a date of 2/16/25 with a 14 day cycle would have one cycle be 2/16 to 3/1 and another be 2/2 to 2/15 (Dates before the reference date work fine). Months and Years will always start at the earliest date (ex. 1/1/2025)</h6>
             </div>
             
             <h5 style="margin-top: 20px;">Combine these with the filtering on the left to form whatever you need</h5>
@@ -389,8 +440,6 @@ Finance Tracker
         </div>
         <div id="export-options" style="margin-top: 20px;">
             <button class="btn btn-danger btn-sm me-2" id="export-to-pdf">Export to PDF</button>
-            <button class="btn btn-success btn-sm me-2" id="export-to-google-sheets">Export to Google Sheets</button>
-            <button class="btn btn-warning btn-sm" id="export-to-excel">Export to Excel</button>
         </div>
         
     </div>
@@ -414,12 +463,12 @@ Finance Tracker
     <script src="{% static 'js/getAllItemsFunctions.js' %}"></script>
     <script src="{% static 'js/createSummariesFunctions.js' %}"></script>
     <script src="{% static 'js/outputReportsFunctions.js' %}"></script>
+    <script src="{% static 'js/initialBalanceFunctions.js' %}"></script>
 {% endblock %}
 
 {% include 'main/modal_confirmation.html' %}
 
 <script>
- 
 </script>
 
 <script>
@@ -428,7 +477,7 @@ Finance Tracker
         filterTransactions(); // Call the function when the page loads
         sortTransactions(); // Call the function when the page loads
        // updateCurrentBalance();
-       // toggleCategoryDivs(); // Keep your existing toggleCategoryDivs function as well
+       toggleCategoryDivs(); 
     };
     
 </script>

@@ -133,6 +133,7 @@ function deleteCategory(categoryID, categoryName, transactionType){
 
                 // remove it from all sources
 
+                toggleCategoryDivs("deleted"); // if there are no categories left, make the add transaction info invisible
                 // this removes it from the category dropdown for adding a transaction
                 if (transactionType === "income_source"){  // get the correct dropdown
                     var categoryDropdown = document.getElementById('income_category');

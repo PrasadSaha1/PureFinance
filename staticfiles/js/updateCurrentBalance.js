@@ -19,6 +19,15 @@ function updateCurrentBalance() {
         }
     });
 
+    const includeInitialBalanceCheckbox = document.getElementById("include-initial-balance")
+    if (includeInitialBalanceCheckbox.checked){
+        var initialBalance = document.getElementById("initialBalance").textContent;
+        newBalance += parseFloat(initialBalance.replace('$', '').replace(/,/g, '').trim());
+
+       const initialBalanceDisplayInTransactions = document.getElementById("initialBalanceDisplayInTransactions")
+       initialBalanceDisplayInTransactions.textContent = `The Initial Balance was ${initialBalance}.`
+    }
+
     // Only update and animate if the balance has changed
     if (oldBalance !== newBalance) {
         balanceElement.innerHTML = formatMoney(newBalance);  // update balance display

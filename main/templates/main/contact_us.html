@@ -1,0 +1,18 @@
+{% extends "main/base_form.html" %}
+
+{% block title %}
+Contact Us
+{% endblock %}
+
+{% block additional_links %}
+<div class="text-center mb-4">
+    <p>Click <a href="/FAQ">here</a> to see our Frequently Asked Questions.</p>
+    <p>Click <a href="/settings">here</a> to go the settings menu.</p>
+</div>
+{% endblock %}
+
+{% block content %}
+{% with button_text="Contact Us" title="Contact Us" %}
+{{ block.super }}
+{% endwith %}
+{% endblock %}

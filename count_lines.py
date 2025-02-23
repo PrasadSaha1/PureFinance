@@ -32,5 +32,5 @@ def count_lines_of_code(language_extensions=None):
 
 if __name__ == "__main__":
     # Specify the extensions for the language you're interested in
-    language_extensions = ['.html']  # For example, Python and JavaScript files
+    language_extensions = ['js']  # For example, Python and JavaScript files
     count_lines_of_code(language_extensions)

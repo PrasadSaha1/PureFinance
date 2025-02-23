@@ -1,19 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import ChangeUsernameForm, ChangePasswordForm, AddEmailForm
+from .forms import ChangeUsernameForm, ChangePasswordForm, AddEmailForm, ContactForm
 from django.contrib.auth import authenticate, update_session_auth_hash, logout
 from register.send_emails import send_verification_email
 from .helpers import determine_email_level
 from .models import TransactionCategory, Transaction
 from django.http import JsonResponse
+from register.send_emails import send_custom_email
 import json
 
 def home(request):
-    context = {
-        'is_logged_in': request.user.is_authenticated,
-        'user': request.user if request.user.is_authenticated else None,
-    }
-    return render(request, "main/home.html", context)
+    return render(request, "main/home.html", {'is_logged_in': request.user.is_authenticated, 'user': request.user if request.user.is_authenticated else None})
 
 @login_required(login_url='/')
 def settings(request):
@@ -103,7 +100,7 @@ def delete_account(request):
 def finance_tracker(request):
     income_categories = TransactionCategory.objects.filter(user=request.user, transaction_type='income_source')
     expense_categories = TransactionCategory.objects.filter(user=request.user, transaction_type='expense')
-
+    initial_balance = request.user.profile.initial_balance 
 
     income_category_names = [category.category_name for category in income_categories]
     expense_category_names = [category.category_name for category in expense_categories]
@@ -111,7 +108,7 @@ def finance_tracker(request):
     all_transactions = Transaction.objects.filter(user=request.user)
 
     return render(request, 'main/finance_tracker.html', {"income_categories": income_categories, "expense_categories": expense_categories, "all_transactions": all_transactions,
-                                                         "income_category_names": income_category_names, "expense_category_names": expense_category_names})
+                                                         "income_category_names": income_category_names, "expense_category_names": expense_category_names, "initial_balance": initial_balance})
 
 @login_required(login_url='/')
 def add_category(request):
@@ -156,33 +153,7 @@ def rename_category(request, category_id):
 
         # Respond with a success message
         return JsonResponse({'success': True})
-
-"""
-@login_required(login_url='/')
-def check_category_unique(request):
-    if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
-        category_names = data.get('category_names', '')  # Get category_name from JSON payload
-        transaction_types = data.get("transaction_types", "")
-
-        categories_to_add = []
-        duplicate_categories = []
-        
-        user = request.user  # Assuming user is logged in
-
-        # Check if the category name already exists for this user
-        for category_name, transaction_type in zip(category_names, transaction_types):
-            if TransactionCategory.objects.filter(user=user, category_name=category_name, transaction_type=transaction_type).exists() or [category_name, transaction_type] in categories_to_add:
-                duplicate_categories.append(category_name)
-            categories_to_add.append([category_name, transaction_type])
-            
-        if duplicate_categories:
-            return JsonResponse({'exists': duplicate_categories})
-        return JsonResponse({'exists': False})
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-"""
-    
+  
 @login_required(login_url="/")
 def add_transaction(request):
     if request.method == 'POST':
@@ -252,3 +223,51 @@ def update_transaction(request, transaction_id):
         transaction.save()
         return JsonResponse({'success': True})
 
+def FAQ(request):
+    return render(request, "main/FAQ.html")
+
+@login_required
+def contact_us(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            
+            # Prepare the context for the email template
+            context = {
+                'name': name,
+                'email': email,
+                'message': message,
+            }
+            
+            template_name = 'main/contact_us_email.html'  # Your email template
+
+            # Send the email using your custom function
+            send_custom_email(subject, template_name, context, 'newprasadsaha@gmail.com')
+
+            # Redirect to a thank you page
+            return render(request, 'main/contact_us.html', {'form': form, "message": "Message sent successfully!"})
+            # return render(request, 'contact/thank_you.html') 
+    else:
+        form = ContactForm()
+
+    return render(request, 'main/contact_us.html', {'form': form})
+
+def help(request):
+    return render(request, "main/help.html")
+
+@login_required
+def add_initial_balance(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        amount = float(data.get("amount", 0))
+
+        user_profile = request.user.profile  # Access the UserProfile
+        user_profile.initial_balance = amount
+        user_profile.save()
+
+        return JsonResponse({"success": True})
+    

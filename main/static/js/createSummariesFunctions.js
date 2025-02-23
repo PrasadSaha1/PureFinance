@@ -157,7 +157,7 @@ function createSummaries() {
             // from the second date, one is being subtracted as adding the amount would be the start of the next cycle
             const row = `
                 <tr class="${rowClass}" name="summaries">
-                    <td>${formatDateFromISO(summary[0])}</td>
+                    <td>${formatDateFromISO(getStartDate(summary[0]))}</td>
                     <td>${formatDateFromISO(getEndDate(summary[0], summarySize, summarySizeUnit))}</td>
                     <td>$${formatMoney(summary[1], true)}</td> 
                 </tr>

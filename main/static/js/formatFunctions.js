@@ -61,7 +61,6 @@ function decreaseStartTime(date, summarySize, summarySizeUnit) {
     const DAYSSINCE1900 = 5000;
     const MONTHSSINCE1900 = 200;
     const YEARSSINCE1900 = 20;
-    console.log(summarySizeUnit);
 
     if (summarySizeUnit === "day") {
         date.setDate(date.getDate() - summarySize * DAYSSINCE1900 + 1);
@@ -89,6 +88,7 @@ function getNewDate(startDate, currentDate, unitSummaryDifference, summaryUnit) 
     } else if (summaryUnit === "month") {
         var entireDifference = Math.abs(dateDifference.months);  // take the abs as mod works differnetly with negatives, which we don't want
         var monthsToSubtract = entireDifference % unitSummaryDifference;
+
         currentDate.setMonth(currentDate.getMonth() - monthsToSubtract);
         // Set to the 1st of the month
         currentDate.setDate(1);
@@ -101,7 +101,6 @@ function getNewDate(startDate, currentDate, unitSummaryDifference, summaryUnit) 
         currentDate.setMonth(0); // January is month 0 in JS
         currentDate.setDate(1);
     }
-    console.log(dateDifference)
     return currentDate;
 }
 
@@ -119,6 +118,22 @@ function formatDateFromISO(dateString) {
     // Custom formatting to add the period after the month abbreviation
     const [month, day, year] = formattedDate.split(' ');
     return `${month}. ${day} ${year}`;
+}
+
+function getStartDate(date) {
+    var startDateFromFilter = document.getElementById('start-date').value;  // get the start and end dates
+    if (startDateFromFilter){
+        var intervalStart = new Date(date);
+        var startDateFromFilter = new Date(startDateFromFilter);
+
+        intervalStart.setDate(intervalStart.getDate());
+        startDateFromFilter.setDate(startDateFromFilter.getDate() + 1);
+        console.log(intervalStart, startDateFromFilter)
+
+        return intervalStart > startDateFromFilter ? intervalStart : startDateFromFilter;
+    }
+    return date
+
 }
 
 function getEndDate(date, unitsToAdd, unit) {

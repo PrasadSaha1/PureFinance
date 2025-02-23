@@ -14,3 +14,4 @@ class Transaction(models.Model):
     transaction_name = models.CharField(max_length=50)
     transaction_date = models.DateField()
     transaction_amount = models.FloatField()
+

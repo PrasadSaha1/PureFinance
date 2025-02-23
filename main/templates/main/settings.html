@@ -46,10 +46,12 @@ Settings
                 {% csrf_token %}
                 <button class="btn btn-danger mb-3">Delete Account</button>
             </form>
+
         </div>
     </div>
-    <div class="bg-light p-4 rounded shadow-sm" style="margin-top: 20px;">
-        <h1 class="text-center">Options</h1>
+    <div class="bg-light p-4 rounded shadow-sm" style="margin-top: 20px; justify-items: center;">
+        <h1>Options</h1>
+        <button class="btn btn-info mb-3" style="margin-top: 10px" onclick="window.location.href='/contact_us'">Contact Us</button>
     </div>
 </div>
 
@@ -60,4 +62,3 @@ Settings
 {% endblock %}
 
 {% endblock %}
-

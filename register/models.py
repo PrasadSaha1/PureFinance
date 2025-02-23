@@ -9,3 +9,5 @@ class UserProfile(models.Model):
     # they are defined here as each user would have these attributes
     show_confirmation_delete_category = models.BooleanField(default=True)
     show_confirmation_delete_transaction = models.BooleanField(default=True)
+
+    initial_balance = models.FloatField(default=0)

@@ -70,6 +70,11 @@ forms.forEach(form => { // get the event listener for both forms
             categoryDropdown.appendChild(newOption);  // add to the category dropdown
         
             // these lines dynamically add the new category to the dropdown for editing transaction
+
+            // if the add transaction information was invisible before, now, it's visible 
+            // the true parameter is for 
+            toggleCategoryDivs("added");
+
             // we start by getting all of the transactions for the transaction type
             if(transactionType === "income_source"){  // get the correct type of transaction
                 var categories = document.querySelectorAll('[name="income-categories-for-edit-transaction"]'); 
@@ -153,6 +158,7 @@ forms.forEach(form => { // get the event listener for both forms
             </div>
                 `;
                 }
+                
             )
         }
     });

@@ -63,6 +63,9 @@ document.getElementById("transaction-form").addEventListener("submit", function(
     // toggleCurrentBalance();
     filterTransactions();
 
+   // let tempRow1 = document.getElementById("temp-row");
+
+
     // send the AJAX request
     fetch("/add_transaction/", {
         method: 'POST',
@@ -150,29 +153,56 @@ document.getElementById("transaction-form").addEventListener("submit", function(
 });
 
 
-function toggleCategoryDivs() {
+function toggleCategoryDivs(transactionChange = "none") {
     /* This determines which dropdown, if any, will be shown on add transaction */
-
     // get the entire div
     var incomeCategoriesDiv = document.getElementById('add_transaction_income_categories');
     var expenseCategoriesDiv = document.getElementById('add_transaction_expense_categories');
+    
+    var incomeCategorySelect = document.getElementById('income_category');
+    var expenseCategorySelect = document.getElementById('expense_category');
+
+    // Get the number of options for each select
+    var numIncomeCategories = incomeCategorySelect ? incomeCategorySelect.options.length - 1 : 0; // Subtract 1 for the default 'Select Category' option
+    var numExpenseCategories = expenseCategorySelect ? expenseCategorySelect.options.length - 1 : 0; // Same for expense category
+
+    if (transactionChange === "deleted") {
+        numIncomeCategories --;  // factor in the new one
+        numExpenseCategories --;
+    }
     
     // get only the options
     var incomeSelect = incomeCategoriesDiv.querySelector('select');
     var expenseSelect = expenseCategoriesDiv.querySelector('select');
 
-    if (document.getElementById('income_source').checked) {
-        incomeCategoriesDiv.style.display = 'block';
-        expenseCategoriesDiv.style.display = 'none';
-        incomeSelect.setAttribute('required', 'true');  // make it required
-        expenseSelect.removeAttribute('required');  // stop the invisible one from being required
+    expenseCategoriesDiv.style.display = 'none';
+    expenseSelect.removeAttribute('required');  // stop the invisible one from being required
+    incomeCategoriesDiv.style.display = 'none';
+    incomeSelect.removeAttribute('required');  // stop the invisible one from being required
+    document.getElementById("noIncomeCategoriesAddTransaction").style.display = "none"
+    document.getElementById("noExpenseCategoriesAddTransaction").style.display = "none"
+
+    if (document.getElementById('income_source').checked) { 
+        if (numIncomeCategories || transactionChange === "added") {
+            document.getElementById("addTransactionSettings").style.display = ""
+            incomeCategoriesDiv.style.display = 'block';
+            incomeSelect.setAttribute('required', 'true');  // make it required
+        } else {
+            document.getElementById("noIncomeCategoriesAddTransaction").style.display = ""
+            document.getElementById("addTransactionSettings").style.display = "none"
+        }
     } else if (document.getElementById('expense').checked) {
-        expenseCategoriesDiv.style.display = 'block';
-        incomeCategoriesDiv.style.display = 'none';
-        expenseSelect.setAttribute('required', 'true');  // make it required
-        incomeSelect.removeAttribute('required');  // stop the invisible one from being required
+        if (numExpenseCategories || transactionChange === "added") {
+            document.getElementById("addTransactionSettings").style.display = ""
+            expenseCategoriesDiv.style.display = 'block';
+            expenseSelect.setAttribute('required', 'true');  // make it required
+        } else {
+            document.getElementById("noExpenseCategoriesAddTransaction").style.display = ""
+            document.getElementById("addTransactionSettings").style.display = "none"
+        }
     }
 }
+
 
 function autofillDate() {
     /* This fills the date input with the current date in the add transactions menu. Called after each transaction is added and on page refresh */

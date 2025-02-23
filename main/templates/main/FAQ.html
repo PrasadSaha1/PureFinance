@@ -1,0 +1,369 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}
+FAQ
+{% endblock %}
+
+{% block htmlhead %}
+<link rel="stylesheet" href="{% static 'css/FAQStyles.css' %}">
+{% endblock htmlhead %}
+
+{% block content %}
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+<div class="bg-light p-4 rounded shadow-sm">
+    <h1 style="text-align: center;">Frequently Asked Questions</h1>
+
+    <div class="mb-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search for a question..." onkeyup="searchQuestions()">
+    </div>
+
+    <p>Have another question? Contact us <a href="{% url 'contact_us' %}">here.</a></p>
+    <!--
+    <div class="mb-4">
+        <button id="expandAll" class="btn btn-primary" onclick="toggleAccordion(true)">Expand All</button>
+        <button id="collapseAll" class="btn btn-secondary" onclick="toggleAccordion(false)">Collapse All</button>
+    </div>
+    -->
+
+    <!-- The Account System -->
+    <h3 class="sectionHeaders">The Account System</h3>
+    <div class="accordion" id="accountSystemAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q1">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a1">
+                    Why do I need to make an account?
+                </button>
+            </h3>
+            <div id="a1" class="accordion-collapse collapse" aria-labelledby="q1">
+                <div class="accordion-body">
+                    MyFinance requires users to make an account to allow access to past data. <hr>
+                    We will not use your data in any way outside of the website.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q2">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2">
+                    What would my email be used for?
+                </button>
+            </h3>
+            <div id="a2" class="accordion-collapse collapse" aria-labelledby="q2">
+                <div class="accordion-body">Your email is a security feature that allows you to access your account if you forgot your username or password. 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Making Categories -->
+    <h3 class="sectionHeaders">Making Categories</h3>
+    <div class="accordion" id="categoriesAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q3">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a3">
+                    What are categories for incomes and expenses?
+                </button>
+            </h3>
+            <div id="a3" class="accordion-collapse collapse" aria-labelledby="q3">
+                <div class="accordion-body">
+                    Categories for incomes/expenses provide you a way to group your transactions, allowing for better analysis of financial trends. 
+                    <hr> There are many ways to make categories. For example, you could have one expense category be “wants”, and another be “needs”. You could also have one expense category be “Video Games”, another be “Movies”, and another be “clothing”. 
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q4">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a4">
+                    What if I have a category that can be both an income and an expense?
+                </button>
+            </h3>
+            <div id="a4" class="accordion-collapse collapse" aria-labelledby="q4">
+                <div class="accordion-body">
+                    In this case, you can add that category as both an income and an expense.
+                    <hr> Category names must generally be unique, but duplicates are allowed if they are in different transaction types (income/expense).
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q5">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a5">
+                    What happens when I delete a category? 
+                </button>
+            </h3>
+            <div id="a5" class="accordion-collapse collapse" aria-labelledby="q5">
+                <div class="accordion-body">
+                    If you delete a category, all transactions that use that category will default to “No Category”. 
+                    <hr> You can then go to each transaction and edit it to add a category. 
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Adding and Viewing Transactions -->
+    <h3 class="sectionHeaders">Adding and Viewing Transactions</h3>
+    <div class="accordion" id="transactionsAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q6">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a6">
+                    How can I add a transaction?
+                </button>
+            </h3>
+            <div id="a6" class="accordion-collapse collapse" aria-labelledby="q6">
+                <div class="accordion-body">
+                    In order to add a transaction, you must 
+                    <hr>1. Specify it as an income or an expense 
+                    <hr>2. Choose the category of the transaction. You can not enter any transactions before you have entered at least one category for that transaction type (income/expense)
+                    <hr>3. Add a name for the transaction. These must be less than 50 characters and may only contain alphanumeric (a-z, 0-9) symbols. 
+                    <hr>4. Specify the date of the transaction. In many cases, this will be the current date, but you can change this to whatever date you would like. 
+                    <hr>5. Add the amount. The amount must be positive.                     
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q7">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a7">
+                    When viewing transactions, how can I tell the difference between an income and an expense?
+                </button>
+            </h3>
+            <div id="a7" class="accordion-collapse collapse" aria-labelledby="q7">
+                <div class="accordion-body">
+                    Incomes will be green, while expenses will be red.      
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtering and Sorting Transactions -->
+    <h3 class="sectionHeaders">Filtering and Sorting Transactions</h3>
+    <div class="accordion" id="filteringSortingAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q8">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a8">
+                    How does filtering transactions work?
+                </button>
+            </h3>
+            <div id="a8" class="accordion-collapse collapse" aria-labelledby="q8">
+                <div class="accordion-body">
+                    When filtering transactions, you can choose to include only a specific transaction type (income or expense), only include specific categories, or only include transactions within a date/price range. 
+                    <hr>The current balance that is shown will reflect the transactions currently on the screen. To reset it to include all transactions, scroll down to the end of filter transactions, where you can reset the filters. 
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q9">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a9">
+                    I’m filtering by date and/or by price, but I don’t see anything. 
+                </button>
+            </h3>
+            <div id="a9" class="accordion-collapse collapse" aria-labelledby="q9">
+                <div class="accordion-body">
+                    If you are filtering by date/price and don’t see anything, it means that 
+                    <hr>1. Your inputs are invalid (ie. entering a high price of $20 and a low price of $50. The website will inform you when this occurs). 
+                    <hr>2. There are no transactions in that range.                     
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q10">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a10">
+                    How does sorting transactions work?
+                </button>
+            </h3>
+            <div id="a10" class="accordion-collapse collapse" aria-labelledby="q10">
+                <div class="accordion-body">
+                    Under the filter options, you can find the sorting options. These allow you to filter a transaction by its date, its name, or its amount. 
+                    <hr> Note that amounts are absolute values, so incomes and expenses are treated the same
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Viewing Summaries -->
+    <h3 class="sectionHeaders">Viewing Summaries</h3>
+    <div class="accordion" id="viewingSummariesAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q11">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a11">
+                    How does viewing the summaries work?
+                </button>
+            </h3>
+            <div id="a11" class="accordion-collapse collapse" aria-labelledby="q11">
+                <div class="accordion-body">
+                    Once you have added some transactions, you can click “View Summaries” to view your spending habits on a weekly, monthly, annually, or custom basis. This combines all of the transaction amounts and gives you the sum of all the transactions over that period. 
+                    <hr>These can be combined with the filtering options. For example, if you only selected certain categories, the summary amounts will only reflect those transactions. 
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q12">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a12">
+                    How does making a custom summary period work? 
+                </button>
+            </h3>
+            <div id="a12" class="accordion-collapse collapse" aria-labelledby="q12">
+                <div class="accordion-body">
+                    To make a custom summary period, you must
+                    <hr>1. Enter the size of the summary period (ex. 14 days, 2 months)
+                    <hr>2. Enter a reference date for the summary period. This date will start a summary period, and all other summary periods will start at multiples of this date. For example, if you have a reference date of 12/1/2024, one summary period will start on that date, another will start on 2/1/2025, and so on. Note that all months will default to the 1st of each month, and all each will default to the first of the year.                         
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q13">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a13">
+                    How can I get an in-depth analysis of one summary period (ex. A specific week?)
+                </button>
+            </h3>
+            <div id="a13" class="accordion-collapse collapse" aria-labelledby="q13">
+                <div class="accordion-body">
+                    To achieve that, you can go to view transactions and specify that summary period when filtering by date. 
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Making PDFs -->
+    <h3 class="sectionHeaders">Making PDFs</h3>
+    <div class="accordion" id="makingPDFsAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q14">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a14">
+                    How do the PDFs work?
+                </button>
+            </h3>
+            <div id="a14" class="accordion-collapse collapse" aria-labelledby="q14">
+                <div class="accordion-body">
+                    To make a PDF, click on “Export to PDF” under your transactions. From there, you will enter your name. 
+                    <hr> If you are currently looking at the raw transactions, the PDF will include those. If you are looking at summaries, the PDF will include those instead.
+                    <hr> The PDFs are based on the filters 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Website Questions -->
+    <h3 class="sectionHeaders">General Website Questions</h3>
+    <div class="accordion" id="generalWebsiteAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="q15">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a15">
+                    Who is the target audience for this website?
+                </button>
+            </h3>
+            <div id="a15" class="accordion-collapse collapse" aria-labelledby="q15">
+                <div class="accordion-body">
+                    This website was designed for high school students; however, all ages can benefit from it.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    body, html {
+        margin-top: -30px; /* Remove unwanted margin at the top */
+    }
+
+    .sectionHeaders {
+        margin-top: 20px; /* Add your desired margin-top here */
+    }
+
+
+    .accordion-body {
+    border-bottom: 1px solid black; /* Adds a thin black border only on the bottom */
+    padding: 10px; /* Optional: Add padding to create space between the content and the border */
+}
+
+
+
+</style>
+
+
+<script>
+    function searchQuestions() {
+        // Get the search input and convert it to lowercase
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        
+        
+        const headers = document.querySelectorAll('.sectionHeaders'); // Use querySelectorAll to select all headers
+        if (query) {
+            headers.forEach(function(header) {
+                header.style.display = "none"; // Hide all headers if query is truthy
+            });
+        } else {
+            headers.forEach(function(header) {
+                header.style.display = ""; // Show all headers if query is falsy
+            });
+        }
+            
+        // Get all the question buttons
+        const items = document.querySelectorAll('.accordion-header');
+        
+        items.forEach(function(question) {
+            // Check if the question contains the search query
+            const questionText = question.innerText.toLowerCase();
+            
+            // Show or hide the question based on whether it matches the query
+            if (questionText.includes(query)) {
+                question.closest('.accordion-item').style.display = '';
+            } else {
+                question.closest('.accordion-item').style.display = 'none';
+            }
+        });
+    }
+    
+    function toggleAccordion(expand) {
+        
+            const allAccordions = document.querySelectorAll('.accordion-collapse');
+            const allButtons = document.querySelectorAll('.accordion-button');
+            
+            allAccordions.forEach((accordion) => {
+                if (expand) {
+                    new bootstrap.Collapse(accordion, { toggle: true });
+                } else {
+                    if (accordion.classList.contains('show')) {
+                        new bootstrap.Collapse(accordion, { toggle: true });
+                    }
+                }
+            });
+
+            allButtons.forEach((button) => {
+                if (expand) {
+                    button.setAttribute('aria-expanded', 'true');
+                } else {
+                    button.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Change button text based on action
+            if (expand) {
+                document.getElementById('expandAll').style.display = 'none';
+                document.getElementById('collapseAll').style.display = 'inline-block';
+            } else {
+                document.getElementById('expandAll').style.display = 'inline-block';
+                document.getElementById('collapseAll').style.display = 'none';
+            }
+                            
+
+        }
+
+</script>
+
+
+{% endblock %}

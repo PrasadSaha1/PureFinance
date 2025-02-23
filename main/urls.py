@@ -19,5 +19,8 @@ urlpatterns = [
     path('delete_transaction/<int:transaction_id>/', views.delete_transaction, name='delete_transaction'),
     path('delete_mass_transactions/', views.delete_mass_transactions, name='delete_mass_transactions'),
     path('update_transaction/<int:transaction_id>/', views.update_transaction, name='update_transaction'),
-   # path('export_to_pdf/', views.export_to_pdf, name='export_to_pdf'),
+    path('FAQ', views.FAQ, name='FAQ'),
+    path('contact_us', views.contact_us, name='contact_us'),
+    path('help', views.help, name='help'),
+    path('add_initial_balance/', views.add_initial_balance, name='add_initial_balance'),
 ]

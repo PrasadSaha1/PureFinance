@@ -1,54 +1,3 @@
-/*
-function toggleDeleteSelectedButtonVisibility() {
-    // this function determines whether or not the delete selected button, used for deleting multiple transactions at a time, will be visible
-    // used in toggleSelectAll() (below) and the input for selecting a transaction for deletion
-
-    const selectedTransactions = document.querySelectorAll('.select-transaction:checked');
-    const deleteButton = document.getElementById('delete-selected-btn');  // the id for the delete button
-    
-    if (selectedTransactions.length > 0) {
-        deleteButton.style.display = 'inline-block';
-    } else {
-        deleteButton.style.display = 'none';
-    }
-}
-
-function toggleSelectAll(source) {
-    // this function selects each transaction
-    const checkboxes = document.querySelectorAll('.select-transaction');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = source.checked;
-    });
-    toggleDeleteSelectedButtonVisibility(); // Update delete button visibility
-    }
-
-function massDeleteTransactions() {
-    // this function deletes the selected transactions
-    const selectedTransactions = document.querySelectorAll('.select-transaction:checked'); // get the transactions
-    const idsToDelete = Array.from(selectedTransactions).map(checkbox => checkbox.getAttribute('data-id'));  // get their ids
-
-    if (idsToDelete.length > 0) {
-        // Show confirmation modal before proceeding with deletion
-        const confirmationMessage = `Are you sure you want to delete ${idsToDelete.length} transaction(s)?`;
-        updateCurrentBalance();
-        const form = document.createElement('form');
-        form.method = 'POST'; 
-        form.action = '/delete_mass_transactions/';
-
-        // Add the transaction IDs to the form data
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'transaction_ids';
-        input.value = JSON.stringify(idsToDelete);
-        form.appendChild(input);
-
-        // Show the confirmation modal
-        showConfirmationModal(form, confirmationMessage);
-    }
-}
-    */
-
-
 function confirmDelete(transactionId) {
     if (showConfirmationModal("N/A", "Are you sure that you would like to delete this transaction?")) {
         deleteTransaction(transactionId);
@@ -58,10 +7,10 @@ function confirmDelete(transactionId) {
     
 function deleteTransaction(transactionId) {
     /* Deletes a transaction */
-
     const row = document.getElementById(`transaction-id-${transactionId}`);
     row.remove();  // remove it from sight
-    updateCurrentBalance();  // have the balance update
+    filterTransactions(); // this will also update the current balance
+
     toggleNoCategoryFilter();  // see whether or not No Category is needed (if this was the only transaction with No Category, it is not needed anymore)
     // send the AJAX request
     fetch(`/delete_transaction/${transactionId}/`, {
@@ -198,7 +147,7 @@ function saveTransaction(transactionId, transactionType) {
     elements[3].textContent = `$${parseFloat(amount).toFixed(2)}`;
 
     cancelEditTransaction(transactionId);  // the equivlant of the user clicking cancel to go back to view mode
-    updateCurrentBalance(); 
+    filterTransactions();  // this will also update the current Balance 
 
 
     // send the AJAX request

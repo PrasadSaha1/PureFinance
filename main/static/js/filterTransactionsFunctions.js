@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     // attach event listeners to anything that would changing the filtering 
-    document.querySelectorAll('input[name="transactionTypeFilter"], input[name="categoryFilter"], #date-filter-checkbox, #price-filter-checkbox, #low-price, #high-price, #start-date, #end-date')
+    document.querySelectorAll('#include-initial-balance, input[name="transactionTypeFilter"], input[name="categoryFilter"], #date-filter-checkbox, #price-filter-checkbox, #low-price, #high-price, #start-date, #end-date')
         .forEach(input => {
             input.addEventListener("change", filterTransactions);
         });
@@ -28,7 +28,7 @@ function getCheckedCategories() {
     return selectedCategories;
 }
 
-function filterTransactions() {
+function filterTransactions(preventUpdateCurrentBalance = false) {
     toggleCategoryState();  // toggle whether or not checkboxes are greyed out based on whether or not income/expense is selected to be shown
     toggleNoCategoryFilter();  // determine if no category should be shown
     var isError = false;  // if there's an error, don't shown anything
@@ -45,7 +45,6 @@ function filterTransactions() {
         startDate = document.getElementById('start-date').value;  // get the start and end dates
         endDate = document.getElementById('end-date').value;
 
-        // console.log(startDate, endDate)
         
         // check if the dates are valid. If an invalid date (ex. 04-31-2025), the date will be empty
         if (endDate >= startDate && startDate != "" && endDate != "") {
@@ -147,11 +146,15 @@ function filterTransactions() {
         document.getElementById("transactionsTable").style.display = "table";
     }
     createSummaries();
-    updateCurrentBalance();  // update the balance with the new transactions. The Balance only reflects transactions on the screen
+
+    // preventUpdateCurrentBalance will be true if it comes from addTransaction as the balance is handled differnetly there
+    // if (!preventUpdateCurrentBalance) {
+        updateCurrentBalance();  // update the balance with the new transactions. The Balance only reflects transactions on the screen
+  //  } 
 }
 
 function toggleCategoryState() {
-    /* this function determines whether or not the date, price, and category filters should be greyed out */
+    /* this function determines whether or not the date, price, and category filters should be greyed out on filter transactions */
     const dateCheckbox = document.getElementById("date-filter-checkbox");
     const priceCheckbox = document.getElementById("price-filter-checkbox");
 
