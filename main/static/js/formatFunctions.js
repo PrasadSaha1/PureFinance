@@ -193,5 +193,6 @@ function formatMoney(value, takeAbsolute = false) {
 
 function validatePositiveNumber(input) {
 // Remove any '-' or 'e' characters
-input.value = input.value.replace(/[^0-9.]/g, '');
+// input.value = input.value.replace(/[^0-9.]/g, '');
+
 }

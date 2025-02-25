@@ -4,11 +4,13 @@
 Home
 {% endblock %}
 
+{% load static %}
+
 <div id="content">
     {% block content %}
     <div>
-        <h1 style="text-align: center;">Welcome to the Website</h1>
-        <h3 style="text-align: center;">This is the website description</h3>
+        <h1 style="text-align: center;">Welcome to PureFinance</h1>
+        <h3 style="text-align: center;">The Perfect Place to Manage Your Finances</h3>
     </div>
 
     {% if is_logged_in is False %}
@@ -31,31 +33,32 @@ Home
 
         <!-- Feature 1 -->
         <div class="d-flex align-items-center justify-content-between mt-4">
-            <img src="https://picsum.photos/200" alt="Feature 1" class="img-fluid rounded" style="width: 40%;">
+            <img src="{% static 'images/homePageImage1.png' %}" alt="Feature 1" class="img-fluid rounded" style="width: 40%;">
             <div class="text-content ms-4" style="width: 55%;">
-                <h3>Feature 1</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ac eros vel lacus dignissim volutpat.</p>
+                <h3>View Transactions</h3>
+                <p>View your transactions and filter them to see exactly what you need</p>
             </div>
         </div>
 
         <!-- Feature 2 -->
         <div class="d-flex align-items-center justify-content-between mt-4 flex-row-reverse">
-            <img src="https://picsum.photos/200" alt="Feature 2" class="img-fluid rounded" style="width: 40%;">
+            <img src="{% static 'images/homePageImage2.png' %}" alt="Feature 2" class="img-fluid rounded" style="width: 40%;">
             <div class="text-content me-4" style="width: 55%;">
-                <h3>Feature 2</h3>
-                <p>Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor.</p>
+                <h3>View Financial Summaries</h3>
+                <p>View summaries of your transactions to track spending patterns</p>
             </div>
         </div>
 
         <!-- Feature 3 -->
         <div class="d-flex align-items-center justify-content-between mt-4">
-            <img src="https://picsum.photos/200" alt="Feature 3" class="img-fluid rounded" style="width: 40%;">
+            <img src="{% static 'images/homePageImage3.png' %}" alt="Feature 3" class="img-fluid rounded" style="width: 40%;">
             <div class="text-content ms-4" style="width: 55%;">
-                <h3>Feature 3</h3>
-                <p>Aenean lacinia bibendum nulla sed consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+                <h3>Make PDFs</h3>
+                <p>Make PDFs of your finances to share with others</p>
             </div>
         </div>
     </div>
 
-    {% endblock %}
 </div>
+
+{% endblock %}

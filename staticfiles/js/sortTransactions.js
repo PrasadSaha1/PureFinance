@@ -34,4 +34,5 @@ function sortTransactions() {
 
     const tbody = document.querySelector('#transactionsTable tbody');
     transactions.forEach(transactions => tbody.appendChild(transactions));
+    createSummaries();  // sort the summaries as well
 }

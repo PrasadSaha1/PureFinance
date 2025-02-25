@@ -370,7 +370,7 @@ Finance Tracker
                             </td>
                             <td>
                                 <button type="button" class="btn btn-primary btn-sm edit-btn" onclick="toggleEditTransactionMode('{{ transaction.id }}', '{{ transaction.transaction_type }}')">Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="confirmDelete('{{ transaction.id }}')">Delete</button>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="deleteTransaction('{{ transaction.id }}')">Delete</button>
                                 <button type="button" class="btn btn-success btn-sm save-btn" onclick="saveTransaction('{{ transaction.id }}', '{{ transaction.transaction_type }}')" style="display:none;">Save</button>
                                 <button type="button" class="btn btn-secondary btn-sm cancel-btn" onclick="cancelEditTransaction('{{ transaction.id }}')" style="display:none;">Cancel</button>
                             </td>
@@ -420,7 +420,8 @@ Finance Tracker
                 <h6>The reference date is when values would start. For example, a date of 2/16/25 with a 14 day cycle would have one cycle be 2/16 to 3/1 and another be 2/2 to 2/15 (Dates before the reference date work fine). Months and Years will always start at the earliest date (ex. 1/1/2025)</h6>
             </div>
             
-            <h5 style="margin-top: 20px;">Combine these with the filtering on the left to form whatever you need</h5>
+            <h5 style="margin-top: 20px;">Combine these with the filtering/sorting on the left to form whatever you need</h5>
+            <h5>Intervals with no transactions are excluded</h5>
 
             <h2 id="noSummariesText" style="display: none;">No Summaries Found. Please change your summary settings, add some transations, or change your filters</h2>
 
@@ -439,7 +440,7 @@ Finance Tracker
 
         </div>
         <div id="export-options" style="margin-top: 20px;">
-            <button class="btn btn-danger btn-sm me-2" id="export-to-pdf">Export to PDF</button>
+            <button class="btn btn-warning btn-sm me-2" id="export-to-pdf">Export to PDF</button>
         </div>
         
     </div>
@@ -451,9 +452,9 @@ Finance Tracker
 {% block scripts %}
     <script src="{% static 'js/addCategoriesFunctions.js' %}"></script>
     <script src="{% static 'js/modifyCategoriesFunctions.js' %}"></script>
-    <script src="{% static 'js/showConfirmationModal.js' %}"></script>
     <script src="{% static 'js/addTransactionsFunctions.js' %}"></script>
     <script src="{% static 'js/modifyTransactionsFunctions.js' %}"></script>
+    <script src="{% static 'js/showConfirmationModal.js' %}"></script>
     <script src="{% static 'js/formatFunctions.js' %}"></script>
     <script src="{% static 'js/updateCurrentBalance.js' %}"></script>
     <script src="{% static 'js/filterTransactionsFunctions.js' %}"></script>

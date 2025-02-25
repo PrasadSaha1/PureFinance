@@ -149,8 +149,25 @@ function createSummaries() {
     });
     allSummaries.push([currentSummaryStartDate, currentSummaryBalance])
 
+    const sortOption = document.querySelector('input[name="transactionSort"]:checked').value;
+    allSummaries.sort((a, b) => {
+        switch (sortOption) {
+            case 'byAmountLH':  // low to high amount
+                return a[1] - b[1];
+            case 'byAmountHL':  // high to low amount
+                return b[1] - a[1];
+            case 'byDateLM':  // least recent to most recent start date
+                return new Date(a[0]) - new Date(b[0]);
+            default: // most to least recent date. This will also occur when they sort alphabetically, which wouldn't make sense
+                return new Date(b[0]) - new Date(a[0]);
+        }
+    });
+    
+
+
     if (transactions.length > 0) {
         allSummaries.forEach(summary => {
+            console.log(summary[0])
             const rowClass = summary[1] > 0 ? 'green' : 'red';
 
             // the true parameter for the money makes it an absolute value

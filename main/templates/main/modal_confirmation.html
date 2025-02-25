@@ -4,12 +4,17 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
             </div>
-            <div class="modal-body" id="modalBody">Are you sure you want to proceed with this action?</div>
+            <div class="modal-body" id="modalBody">
+                <p>Are you sure you want to proceed with this action?</p>
+                <label for="userInput">Enter reason:</label>
+            </div>
+            <div id="modalTextInput" style="display: none;">
+                <input type="text" class="form-control" id="userInput" placeholder="Type here..." required>
+            </div>
+            <div id="modalTextError" style="color: red; display: none; font-size: 14px; margin-top: 5px;">
+                Please enter your name
+            </div>
             <div class="modal-footer" id="modalFooter">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="dontAskAgain">
-                    <label class="form-check-label" for="dontAskAgain">Don't ask me again</label>
-                </div>
                 <button type="button" class="btn btn-secondary" id="cancelButton" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="confirmActionButton">Confirm</button>
             </div>            

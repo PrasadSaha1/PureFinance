@@ -124,20 +124,21 @@ function renameCategorySubmit(button, categoryID, transactionType) {
 }
 
 function deleteCategory(categoryID, categoryName, transactionType){
-    showConfirmationModal("N/A", "Are you sure that you would like to delete this category? All transactions with it will default to 'No Category'")
-        .then(proceed => {
-            if(proceed) {
+ //   showConfirmationModal("N/A", "Are you sure that you would like to delete this category? All transactions with it will default to 'No Category'")
+  //      .then(proceed => {
+   //         if(proceed) {
                 // remove it 
                 var category = document.getElementById(`category-${categoryID}`);
                 category.remove() 
 
                 // remove it from all sources
 
-                toggleCategoryDivs("deleted"); // if there are no categories left, make the add transaction info invisible
                 // this removes it from the category dropdown for adding a transaction
                 if (transactionType === "income_source"){  // get the correct dropdown
+                    toggleCategoryDivs("incomeDeleted"); // if there are no categories left, make the add transaction info invisible
                     var categoryDropdown = document.getElementById('income_category');
                 } else{
+                    toggleCategoryDivs("expenseDeleted"); // if there are no categories left, make the add transaction info invisible
                     var categoryDropdown = document.getElementById('expense_category');
                 }
 
@@ -201,6 +202,6 @@ function deleteCategory(categoryID, categoryName, transactionType){
                         'X-CSRFToken': getCSRFToken(),
                     },
                 })
-            } 
-        });
+        //    } 
+      //  });
 }

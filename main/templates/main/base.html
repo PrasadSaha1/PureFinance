@@ -3,10 +3,11 @@
 <head>
     {% block htmlhead %}
     {% endblock htmlhead %}
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MyFinance{% endblock %}</title>
-    <link rel="icon" type="image/jpeg" href="https://picsum.photos/200">
+    <title>{% block title %}PureFinance{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/pureFinanceLogo.png' %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         /* Fixed navbar on scroll */
@@ -36,6 +37,7 @@
             background-attachment: fixed; /* Keeps the gradient fixed while scrolling */
             background-size: cover; /* Ensures the gradient covers the entire page */
             color: #444444; /* Dark text color */
+            margin-bottom: 30px;  /* The page goes down 30px below the minimum */
         }
 
         /* Text color for the page */
@@ -52,7 +54,11 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="#">MyFinance</a>
+            <a class="navbar-brand" href="#">
+                <!-- Add the image to the left of the text -->
+                <img src="{% static 'images/pureFinanceLogo.png' %}" alt="Logo" style="height: 30px; margin-right: 10px;">
+                PureFinance
+            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -62,7 +68,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/finance_tracker">Finance Tracker</a>
+                        <a class="nav-link" href="/finance_tracker/">Finance Tracker</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/help">Help</a>
@@ -77,6 +83,7 @@
             </div>
         </div>
     </nav>
+    
 
     <!-- Main Content -->
     <div class="container mt-4">

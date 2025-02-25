@@ -1,10 +1,3 @@
-function confirmDelete(transactionId) {
-    if (showConfirmationModal("N/A", "Are you sure that you would like to delete this transaction?")) {
-        deleteTransaction(transactionId);
-    }
-}
-
-    
 function deleteTransaction(transactionId) {
     /* Deletes a transaction */
     const row = document.getElementById(`transaction-id-${transactionId}`);

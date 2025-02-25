@@ -1,49 +1,48 @@
-let currentForm = null;
-
 function handleFormSubmit(event, form, message) {
     event.preventDefault(); // Prevent form submission
 
-    // Check if the user opted out
-    if (localStorage.getItem("skipConfirmation") === "true") {
-        form.submit(); // Directly submit without showing modal
-        return;
-    }
-
-    showConfirmationModal(form, message).then((confirmed) => {
+    showConfirmationModal(message).then((confirmed) => {
         if (confirmed) {
-            form.submit(); // Submit form only if user confirmed
-        }
+            form.submit();
+        } 
     });
 }
 
-function showConfirmationModal(form, message) {
+function showConfirmationModal(message, forOutputReport = false) {
     return new Promise((resolve) => {
-        if (localStorage.getItem("skipConfirmation") === "true") {
-            resolve(true)
+        // Set message and show modal
+        document.querySelector('.modal-body').textContent = message;
+        if (forOutputReport){
+            document.getElementById('modalTextInput').style.display = "";
+        } else {
+            document.getElementById('modalTextInput').style.display = "none";
         }
-        else {
-            currentForm = form; // Store the form
+        document.getElementById("modalTextError").style.display = "none"
 
-            // Set message and show modal
-            document.querySelector('.modal-body').textContent = message;
-            let confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-            confirmationModal.show();
+        let confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        confirmationModal.show();
 
-            // Handle cancel button
-            document.getElementById('cancelButton').onclick = function() {
-                confirmationModal.hide();
-                resolve(false); // User canceled
-            };
+        // Handle cancel button
+        document.getElementById('cancelButton').onclick = function() {
+            confirmationModal.hide();
+            resolve(false); // Reject action
+        };
 
-            // Handle confirm button
-            document.getElementById('confirmActionButton').onclick = function() {
-                // Check if "Don't ask me again" is selected
-                if (document.getElementById('dontAskAgain').checked) {
-                    localStorage.setItem("skipConfirmation", "true"); // Store preference
+        // Handle confirm button
+        document.getElementById('confirmActionButton').onclick = function() {
+            if (forOutputReport) {
+                var userInput = document.getElementById("userInput").value.trim();
+                var errorText = document.getElementById("modalTextError");
+    
+                if (userInput === "") {
+                    errorText.style.display = "block"; 
+                } else {
+                    confirmationModal.hide();
+                    resolve(userInput); // Resolve with user input if valid
                 }
-
+            } else {
                 confirmationModal.hide();
-                resolve(true); // User confirmed
+                resolve(true); // Confirm action
             }
         };
     });

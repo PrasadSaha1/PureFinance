@@ -138,10 +138,12 @@ function filterTransactions(preventUpdateCurrentBalance = false) {
         }
     });
     if(noTransactions || isError){
+        document.getElementById("export-to-pdf").style.display = "none"
         document.getElementById('noTransactionsText').style.display = "block";
         document.getElementById("transactionsTable").style.display = "none";  // don't show the table
     }
     else{  // show the information
+        document.getElementById("export-to-pdf").style.display = ""
         document.getElementById('noTransactionsText').style.display = "none";
         document.getElementById("transactionsTable").style.display = "table";
     }

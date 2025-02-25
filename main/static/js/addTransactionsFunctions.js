@@ -62,6 +62,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
     sortTransactions(); // filter and sort with the new row. Must be called again after the tempRow is deleted
     // toggleCurrentBalance();
     filterTransactions();
+    toggleCategoryDivs();
 
    // let tempRow1 = document.getElementById("temp-row");
 
@@ -135,7 +136,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
         </td>
         <td>
             <button type="button" class="btn btn-primary btn-sm edit-btn" onclick="toggleEditTransactionMode('${data.transactionId}', '${transactionType}')">Edit</button>
-            <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="confirmDelete('${data.transactionId}')">Delete</button>
+            <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="deleteTransaction('${data.transactionId}')">Delete</button>
             <button type="button" class="btn btn-success btn-sm save-btn" onclick="saveTransaction('${data.transactionId}', '${transactionType}')" style="display:none;">Save</button>
             <button type="button" class="btn btn-secondary btn-sm cancel-btn" onclick="cancelEditTransaction('${data.transactionId}')" style="display:none;">Cancel</button>
         </td>
@@ -166,10 +167,12 @@ function toggleCategoryDivs(transactionChange = "none") {
     var numIncomeCategories = incomeCategorySelect ? incomeCategorySelect.options.length - 1 : 0; // Subtract 1 for the default 'Select Category' option
     var numExpenseCategories = expenseCategorySelect ? expenseCategorySelect.options.length - 1 : 0; // Same for expense category
 
-    if (transactionChange === "deleted") {
+    if (transactionChange === "incomeDeleted") {
         numIncomeCategories --;  // factor in the new one
+    } else if (transactionChange === "expenseDeleted") {
         numExpenseCategories --;
     }
+    console.log(numIncomeCategories, numExpenseCategories)
     
     // get only the options
     var incomeSelect = incomeCategoriesDiv.querySelector('select');
