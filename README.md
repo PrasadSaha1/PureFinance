@@ -6,5 +6,5 @@ If the link is for whatever reason unaccessable, you can view the video of the p
 <b>Notes</b> <br> 
 The app is currently called PureFinance, but originally, it was MyFinance. This is reflected in some elements of the code (ex. the django app is called my_finance)
 
-
+This is a work in progress. 
 remember to add logo.com to documentation
