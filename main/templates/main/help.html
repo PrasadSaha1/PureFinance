@@ -8,21 +8,152 @@ Help Menu
 <div class="bg-light p-4 rounded shadow-sm">
     <h1 style="text-align: center;">Help Menu</h1>
 
-    
+    <ul>
+        <li><a href="#account-system">The Account System</a></li>
+        <li><a href="#initial-balance">Making an Initial Balance</a></li>
+        <li><a href="#transaction-categories">Making Transaction Categories</a></li>
+        <li><a href="#making-transactions">Making Transactions</a></li>
+        <li><a href="#editing-transactions">Viewing, Editing, and Deleting Transactions</a></li>
+        <li><a href="#sorting-filtering">Sorting and Filtering Transactions</a></li>
+        <li><a href="#viewing-summaries">Viewing Summaries</a></li>
+        <li><a href="#making-pdf">Making a PDF</a></li>
+    </ul>
 </div>
 
-<style>
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="account-system" class="sectionHeaders">The Account System</h2>
+        <p>To use the website, you must make an account. If you are not currently logged in, you can go to the home page and click Create Account. 
+            <br>From here, you must enter in a unique username and valid password. 
+            <br>From there, you can access the finance tracker. 
+            <br><br>When making your account, you have the option to add an email. You can also add one later. 
+            <br>This would be used for security purposes; for example, if you forget your username, you can get an email with your username(s). If you forget your password, you can get an email to reset it. 
+            <br>When you first add an email, it will be unverified. To verify it, you would check your email for a verification message when you create the account, or when you click Resend Verification Email in the settings. 
+            <br>Verifying your email is optional but is recommended for security purposes. 
+            </p>
+        </div>
+    <div class="faq">
+        <h3>FAQ</h3>
+        <p><strong>Why should I verify my email?</strong><br>Verifying your email helps you recover your account if you forget your credentials.</p>
+    </div>
+</div>
 
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="initial-balance" class="sectionHeaders">Making an Initial Balance</h2>
+        <p>Before using this finance tracker, there’s a good chance that you already had some savings (or debt). To account for that, you can use the initial balance. The initial balance is initially at $0, but you can change that by clicking Edit. From there, you can enter your actual initial balance. If your balance is negative, do NOT enter a negative sign. Instead, specify that it is negative with the button below the input.</p>
+    </div>
+    <div class="faq">
+        <h3>Tip</h3>
+        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+    </div>
+</div>
+
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="transaction-categories" class="sectionHeaders">Making Transaction Categories</h2>
+        <p>After making an initial balance, the next step is to make transaction categories. These categories provide a way for you to categorize your transactions. There are many ways to do this; some users may want to categorize expenses by want/needs, and others may want to be more specific. You must enter categories before adding transactions.</p>    </div>
+</div>
+
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="making-transactions" class="sectionHeaders">Making Transactions</h2>
+        <p>Once you have made some categories, you can add transactions. For each transaction, you have to specify the type (income or expense), category, name, date, and amount. The date is set to the current date, but you can change this for transactions that you forgot to enter on a previous date, or future transactions if you would like a glimpse into the future. Amounts must be positive - expenses will be handled accordingly.</p>
+            </div>
+    <div class="faq">
+        <h3>Tip</h3>
+        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+    </div>
+</div>
+
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="editing-transactions" class="sectionHeaders">Viewing, Editing, and Deleting Transactions</h2>
+        <p>Scroll down to the bottom of the finance tracker to see your transactions. You can use the search bar to find them by their name. For each transaction, you can edit or delete it. When editing, ensure that the amount is positive. After you are finished editing or deleting the transaction, the current balance will reflect it.</p>
+            </div>
+    <div class="faq">
+        <h3>Tip</h3>
+        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+    </div>
+</div>
+
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="sorting-filtering" class="sectionHeaders">Sorting and Filtering Transactions</h2>
+        <p>To the bottom left are the filtering options. These include:</p>
+        <ul>
+            <li><b>Include Initial Balance</b>: Includes the initial balance when calculating your current balance. Checked by default.</li>
+            <li><b>Transaction Type</b>: Choose to see only incomes, only expenses, both, or neither (default: both).</li>
+            <li><b>Categories</b>: Specify which categories to view.</li>
+            <li><b>Filter by Date</b>: Only include transactions within a date range. Ensure valid dates (e.g., end date is not before the start date).</li>
+            <li><b>Filter by Price</b>: Only include transactions within a price range. Expenses are treated as positive values.</li>
+        </ul>
+    </div>
+    <div class="faq">
+        <h3>Tip</h3>
+        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+    </div>
+</div>
+
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="viewing-summaries" class="sectionHeaders">Viewing Summaries</h2>
+        <p>At the top of the view transactions area, there is a view summaries area. This allows you to view the sum of your transactions at various intervals (weekly, monthly, annually).</p>
+          </div>
+    <div class="faq">
+        <h3>Tip</h3>
+        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+    </div>
+</div>
+
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="content">
+        <h2 id="making-pdf" class="sectionHeaders">Making a PDF</h2>
+        <p>If you have at least one transaction, you can click the Export to PDF button. You will enter your name, and then, a PDF of the elements on screen (transactions/summaries, filtering), will be generated.</p>
+            </div>
+    <div class="faq">
+        <h3>Tip</h3>
+        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+    </div>
+</div>
+
+<!-- Repeat this pattern for all other sections -->
+
+<style>
     .sectionHeaders {
-        margin-top: 20px; /* Add your desired margin-top here */
+        text-align: center;
+        scroll-margin-top: 150px; /* Adjust based on your header height */
     }
 
+    .section-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
 
-    .accordion-body {
-    border-bottom: 1px solid black; /* Adds a thin black border only on the bottom */
-    padding: 10px; /* Optional: Add padding to create space between the content and the border */
-}
+    .content {
+        width: 70%;
+    }
+
+    .faq {
+        width: 25%;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .section-container {
+            flex-direction: column;
+        }
+
+        .content, .faq {
+            width: 100%;
+        }
+    }
 </style>
 
-{% endblock %}
 
+
+{% endblock %}

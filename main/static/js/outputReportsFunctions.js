@@ -105,8 +105,8 @@ function makeSummariesTable(doc, yPos, PAGEWIDTH, pageHeight, marginBottom){
     const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0); // 160 - sum of columnwidths
 
     yPos = makeTableHeader(doc, "Summaries", yPos, PAGEWIDTH, tableWidth, columnWidths)
-    summaries.forEach(transaction => {
-        yPos = addSummaryToTable(doc, transaction, yPos, columnWidths, tableWidth, PAGEWIDTH, pageHeight, marginBottom)
+    summaries.forEach(summary => {
+        yPos = addSummaryToTable(doc, summary, yPos, columnWidths, tableWidth, PAGEWIDTH, pageHeight, marginBottom)
     });
 
     doc.save("summaries.pdf");
@@ -116,6 +116,7 @@ function addSummaryToTable(doc, summary, yPos, columnWidths, tableWidth, PAGEWID
     const startDate = summary.querySelector('td:nth-child(1)').textContent.trim();
     const endDate = summary.querySelector('td:nth-child(2)').textContent.trim();
     const summaryAmount = summary.querySelector('td:nth-child(3)').textContent.trim();
+
 
     currentXPos = (PAGEWIDTH - tableWidth) / 2 + 5;
     doc.text(startDate, currentXPos, yPos);
@@ -305,7 +306,6 @@ function createSingleText(doc, text, fontSize, yPos, underlinedPart = "", url = 
 
     if (underlinedText) {
         // Place the underlined part
-        console.log(underlinedText)
         doc.text(underlinedText, (PAGEWIDTH - regularTextWidth - underlinedTextWidth) / 2 + regularTextWidth, yPos);
 
         // Underline the text
@@ -416,7 +416,6 @@ function createReportInformation(doc, reportType) {
         sortText = "By Date (Most Recent to Least Recent)";  
     }
     
-   // console.log(startDate, endDate, lowPrice, highPrice, sortText)
      yPos += createMultipleTextOneLine(doc, `Start Date: ${startDate}`, `End Date: ${endDate}`, "", yPos)
      yPos += createMultipleTextOneLine(doc, `Low Price: ${lowPrice}`, `High Price: ${highPrice}`, "", yPos)
      yPos += createMultipleTextOneLine(doc, `Sort: ${sortText}`, "", "", yPos)

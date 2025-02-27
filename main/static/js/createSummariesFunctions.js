@@ -167,7 +167,6 @@ function createSummaries() {
 
     if (transactions.length > 0) {
         allSummaries.forEach(summary => {
-            console.log(summary[0])
             const rowClass = summary[1] > 0 ? 'green' : 'red';
 
             // the true parameter for the money makes it an absolute value
@@ -176,7 +175,7 @@ function createSummaries() {
                 <tr class="${rowClass}" name="summaries">
                     <td>${formatDateFromISO(getStartDate(summary[0]))}</td>
                     <td>${formatDateFromISO(getEndDate(summary[0], summarySize, summarySizeUnit))}</td>
-                    <td>$${formatMoney(summary[1], true)}</td> 
+                    <td>$${formatMoney(summary[1])}</td> 
                 </tr>
             `;
             tbody.innerHTML += row;

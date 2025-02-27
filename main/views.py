@@ -7,6 +7,7 @@ from .helpers import determine_email_level
 from .models import TransactionCategory, Transaction
 from django.http import JsonResponse
 from register.send_emails import send_custom_email
+from my_finance.settings import EMAIL_HOST_USER
 import json
 
 def home(request):
@@ -213,9 +214,9 @@ def update_transaction(request, transaction_id):
         data = json.loads(request.body)
         transaction = Transaction.objects.get(id=transaction_id)
 
-        category = TransactionCategory.objects.get(user=request.user, category_name=data.get('category'), transaction_type=transaction.transaction_type)
-
-        transaction.transaction_category = category
+        if data.get('category') != "No Category":
+            category = TransactionCategory.objects.get(user=request.user, category_name=data.get('category'), transaction_type=transaction.transaction_type)
+            transaction.transaction_category = category
         transaction.transaction_date = data.get('date')
         transaction.transaction_name = data.get('name')
         transaction.transaction_amount = data.get('amount')
@@ -246,7 +247,7 @@ def contact_us(request):
             template_name = 'main/contact_us_email.html'  # Your email template
 
             # Send the email using your custom function
-            send_custom_email(subject, template_name, context, 'newprasadsaha@gmail.com')
+            send_custom_email(subject, template_name, context, EMAIL_HOST_USER)
 
             # Redirect to a thank you page
             return render(request, 'main/contact_us.html', {'form': form, "message": "Message sent successfully!"})

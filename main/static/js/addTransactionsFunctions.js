@@ -121,6 +121,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
                 <select class="edit-mode-category-dropdown form-select" name="${formattedType}-categories-for-edit-transaction" style="display:none;">
                     ${options}
                 </select>
+                
         </td>
         <td>
             <span class="view-mode">${formatDate(transactionDate)}</span>
@@ -172,7 +173,6 @@ function toggleCategoryDivs(transactionChange = "none") {
     } else if (transactionChange === "expenseDeleted") {
         numExpenseCategories --;
     }
-    console.log(numIncomeCategories, numExpenseCategories)
     
     // get only the options
     var incomeSelect = incomeCategoriesDiv.querySelector('select');

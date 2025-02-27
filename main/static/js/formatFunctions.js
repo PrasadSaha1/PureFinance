@@ -122,13 +122,13 @@ function formatDateFromISO(dateString) {
 
 function getStartDate(date) {
     var startDateFromFilter = document.getElementById('start-date').value;  // get the start and end dates
-    if (startDateFromFilter){
+    var filterByDate = document.getElementById('date-filter-checkbox').checked
+    if (startDateFromFilter && filterByDate){
         var intervalStart = new Date(date);
         var startDateFromFilter = new Date(startDateFromFilter);
 
         intervalStart.setDate(intervalStart.getDate());
         startDateFromFilter.setDate(startDateFromFilter.getDate() + 1);
-        console.log(intervalStart, startDateFromFilter)
 
         return intervalStart > startDateFromFilter ? intervalStart : startDateFromFilter;
     }
@@ -137,7 +137,7 @@ function getStartDate(date) {
 }
 
 function getEndDate(date, unitsToAdd, unit) {
-    const newDate = new Date(date);  // Create a copy of the date
+    var newDate = new Date(date);  // Create a copy of the date
     unitsToAdd --;  // make it the end of the current, not the start of the next
     if (unit === "day") {
         newDate.setDate(newDate.getDate() + unitsToAdd);
@@ -150,6 +150,17 @@ function getEndDate(date, unitsToAdd, unit) {
         newDate.setDate(31);  // 31st day
     }
     
+    var endDateFromFilter = document.getElementById('end-date').value;  // get the start and end dates
+    var filterByDate = document.getElementById('date-filter-checkbox').checked
+    if (endDateFromFilter && filterByDate){
+        var endDateFromFilter = new Date(endDateFromFilter);
+
+        newDate.setDate(newDate.getDate());
+        endDateFromFilter.setDate(endDateFromFilter.getDate() + 1);
+
+        return newDate < endDateFromFilter ? newDate : endDateFromFilter;
+    }
+
     return newDate;
 }
 
@@ -182,17 +193,20 @@ function getDateDifference(startDate, endDate) {
 }
 
 
-function formatMoney(value, takeAbsolute = false) {
+function formatMoney(value) {
     // Converts a float to money (doesn't include dollar sign)
     value = parseFloat(value); // Convert to a float
-    if (takeAbsolute) {  
-        value = Math.abs(value);
-    }
+//    if (takeAbsolute) {  
+ //       value = Math.abs(value);
+  //  }
     return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function validatePositiveNumber(input) {
-// Remove any '-' or 'e' characters
-// input.value = input.value.replace(/[^0-9.]/g, '');
-
+  var value = input.value.replace(/[^0-9.]/g, '');
+  var parts = value.split('.');
+  if (parts.length > 2) {
+    value = parts[0] + '.' + parts.slice(1).join(''); // Keep only first '.'
+  }
+  input.value = value;
 }

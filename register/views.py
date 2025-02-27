@@ -10,7 +10,7 @@ from .models import UserProfile
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.conf import settings
+from my_finance.settings import EMAIL_HOST_USER
 from .forms import PasswordResetForm, UsernameRetrievalForm, NewPasswordForm, SignInForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, update_session_auth_hash
@@ -109,13 +109,13 @@ def forgot_username(request):
                     # Prepare the username(s) to send (one per line)
                     usernames = [user.username for user in users]
                     message = f"The username(s) associated with your email are:\n\n" + "\n".join(usernames)
-                    subject = "Your Username(s)"
+                    subject = "Your Username(s) for PureFinance"
                     
                     # Send the email
                     send_mail(
                         subject,
                         message,
-                        settings.DEFAULT_FROM_EMAIL,  # Ensure you have a DEFAULT_FROM_EMAIL set in settings.py
+                        EMAIL_HOST_USER, 
                         [email],  # Recipient email address
                     )
                     message = "Check your email for your username(s)"
@@ -155,7 +155,7 @@ def forgot_password(request):
                     'token': token,
                 }
                 send_custom_email(
-                    subject='Password Reset Request',
+                    subject='Reset Password for PureFinance',
                     template_name='register/password_reset_email.html',
                     context=context,
                     to_email=user.email
