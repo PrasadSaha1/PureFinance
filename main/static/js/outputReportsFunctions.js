@@ -210,7 +210,7 @@ function addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth,
     yPos += 10;  // Adjust yPos for the next title
     createSingleText(doc, name, 15, yPos);
     yPos += 10;
-    createSingleText(doc, "Made with ", 15, yPos, underlinedPart = "PureFinance", url = "https://purefinance-deployed.vercel.app/");
+    createSingleText(doc, "Made with ", 15, yPos, underlinedPart = "PureFinance", url = "https://purefinance.vercel.app/");
     yPos += 10;
 
     // Add additional content
