@@ -2,7 +2,8 @@ This is Prasad Saha's Coding and Programming Submission for NYS FBLA 2025. <br>
 To view the program, click the link below. This link is also found in the about section of the Github. <br>
 https://purefinance.vercel.app/ <br>
 If the link is for whatever reason unaccessable, you can view a video of the program below.
-<br>[Video](https://www.youtube.com/watch?v=qjhVs847VYQ)
+
+[Video](https://www.youtube.com/watch?v=qjhVs847VYQ)
 <br>[Dependencies](./dependencies.md)
 
 <b>Notes</b> 
