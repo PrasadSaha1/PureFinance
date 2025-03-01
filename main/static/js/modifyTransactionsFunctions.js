@@ -2,7 +2,7 @@ function deleteTransaction(transactionId) {
     /* Deletes a transaction */
     const row = document.getElementById(`transaction-id-${transactionId}`);
     row.remove();  // remove it from sight
-    filterTransactions(); // this will also update the current balance
+    filterTransactions(false); // this will also update the current balance
 
     toggleNoCategoryFilter();  // see whether or not No Category is needed (if this was the only transaction with No Category, it is not needed anymore)
     // send the AJAX request
@@ -163,7 +163,7 @@ function saveTransaction(transactionId, transactionType) {
     console.log()
 
     cancelEditTransaction(transactionId);  // the equivlant of the user clicking cancel to go back to view mode
-    filterTransactions();  // this will also update the current Balance 
+    filterTransactions(false);  // this will also update the current Balance 
 
 
     // send the AJAX request

@@ -1,23 +1,29 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
 Help Menu
 {% endblock %}
 
 {% block content %}
-<div class="bg-light p-4 rounded shadow-sm">
-    <h1 style="text-align: center;">Help Menu</h1>
+<div class="bg-light p-4 rounded shadow-sm" style="text-align: center;">
+    <h1>Help Menu</h1>
+    <img src="{% static 'images/pureFinanceFlowChart.png' %}" alt="Pure Finance Flow Chart" class="img-fluid rounded" style="max-width: 60%; display: block; margin: 0 auto;">
 
-    <ul>
-        <li><a href="#account-system">The Account System</a></li>
-        <li><a href="#initial-balance">Making an Initial Balance</a></li>
-        <li><a href="#transaction-categories">Making Transaction Categories</a></li>
-        <li><a href="#making-transactions">Making Transactions</a></li>
-        <li><a href="#editing-transactions">Viewing, Editing, and Deleting Transactions</a></li>
-        <li><a href="#sorting-filtering">Sorting and Filtering Transactions</a></li>
-        <li><a href="#viewing-summaries">Viewing Summaries</a></li>
-        <li><a href="#making-pdf">Making a PDF</a></li>
-    </ul>
+    <div>
+        <h2>Jump to what you need</h2>
+        <a href="#account-system">The Account System</a> <br>
+        <a href="#initial-balance">Making an Initial Balance</a> <br>
+        <a href="#transaction-categories">Making Transaction Categories</a> <br>
+        <a href="#making-transactions">Making Transactions</a> <br>
+        <a href="#editing-transactions">Viewing, Editing, and Deleting Transactions</a> <br>
+        <a href="#sorting-filtering">Sorting and Filtering Transactions</a> <br>
+        <a href="#viewing-summaries">Viewing Summaries</a> <br>
+        <a href="#making-pdf">Making a PDF</a> <br>
+    </div>
+
+    <p style="margin-top: 30px;">Have questions? Check our <a href="/FAQ">FAQ</a> menu or <a href="/contact_us">Contact Us</a></p>
+    
 </div>
 
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
@@ -25,59 +31,77 @@ Help Menu
         <h2 id="account-system" class="sectionHeaders">The Account System</h2>
         <p>To use the website, you must make an account. If you are not currently logged in, you can go to the home page and click Create Account. 
             <br>From here, you must enter in a unique username and valid password. 
-            <br>From there, you can access the finance tracker. 
+            <br>From there, you can access the finance tracker. By clicking the button on the home page or the link in the header.
+
             <br><br>When making your account, you have the option to add an email. You can also add one later. 
             <br>This would be used for security purposes; for example, if you forget your username, you can get an email with your username(s). If you forget your password, you can get an email to reset it. 
             <br>When you first add an email, it will be unverified. To verify it, you would check your email for a verification message when you create the account, or when you click Resend Verification Email in the settings. 
             <br>Verifying your email is optional but is recommended for security purposes. 
-            </p>
-        </div>
+        </p>
+    </div>
     <div class="faq">
         <h3>FAQ</h3>
-        <p><strong>Why should I verify my email?</strong><br>Verifying your email helps you recover your account if you forget your credentials.</p>
+        <p><strong>Why do I need to make an account?</strong>
+        <br>PureFinance requires users to make an account to allow access to past data. We will not use your data in any way outside of the website.</p>
     </div>
 </div>
 
-<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container" style="justify-content: center;">
     <div class="content">
         <h2 id="initial-balance" class="sectionHeaders">Making an Initial Balance</h2>
-        <p>Before using this finance tracker, there’s a good chance that you already had some savings (or debt). To account for that, you can use the initial balance. The initial balance is initially at $0, but you can change that by clicking Edit. From there, you can enter your actual initial balance. If your balance is negative, do NOT enter a negative sign. Instead, specify that it is negative with the button below the input.</p>
-    </div>
-    <div class="faq">
-        <h3>Tip</h3>
-        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+        <p>Before using this finance tracker, there’s a good chance that you already had some savings (or debt). To account for that, you can use the initial balance.
+           <br>The initial balance is initially at $0, but you can change that by clicking Edit. From there, you can enter your actual initial balance. 
+           <br>If your balance is negative, do NOT enter a negative sign. Instead, specify that it is negative with the button below the input.</p>
     </div>
 </div>
 
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="faq">
+        <h3>FAQ</h3>
+        <p><strong>What if I have a category that is both an income and an expense?</strong>
+        <br>In this case, you can add that category as both an income and an expense. Category names must generally be unique, but duplicates are allowed if they are in different transaction types (income/expense).</p>
+    </div>
     <div class="content">
         <h2 id="transaction-categories" class="sectionHeaders">Making Transaction Categories</h2>
-        <p>After making an initial balance, the next step is to make transaction categories. These categories provide a way for you to categorize your transactions. There are many ways to do this; some users may want to categorize expenses by want/needs, and others may want to be more specific. You must enter categories before adding transactions.</p>    </div>
+        <p>After making an initial balance, the next step is to make transaction categories. These categories provide a way for you to categorize your transactions. 
+            <br>There are many ways to do this; some users may want to categorize expenses by want/needs, and others may want to be more specific. 
+            <br>You must enter categories before adding transactions.
+        </p>    
+    </div>
 </div>
 
-<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container" style="justify-content: center;">
     <div class="content">
         <h2 id="making-transactions" class="sectionHeaders">Making Transactions</h2>
-        <p>Once you have made some categories, you can add transactions. For each transaction, you have to specify the type (income or expense), category, name, date, and amount. The date is set to the current date, but you can change this for transactions that you forgot to enter on a previous date, or future transactions if you would like a glimpse into the future. Amounts must be positive - expenses will be handled accordingly.</p>
-            </div>
-    <div class="faq">
-        <h3>Tip</h3>
-        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+        <p>Once you have made some categories, you can add transactions. For each transaction, you have to specify the type (income or expense), category, name, date, and amount. 
+            <br>The date is set to the current date, but you can change this for transactions that you forgot to enter on a previous date, or future transactions if you would like a glimpse into the future. 
+            <br>Amounts must be positive - expenses will be handled accordingly.
+        </p>
     </div>
 </div>
 
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
     <div class="content">
         <h2 id="editing-transactions" class="sectionHeaders">Viewing, Editing, and Deleting Transactions</h2>
-        <p>Scroll down to the bottom of the finance tracker to see your transactions. You can use the search bar to find them by their name. For each transaction, you can edit or delete it. When editing, ensure that the amount is positive. After you are finished editing or deleting the transaction, the current balance will reflect it.</p>
+        <p>Scroll down to the bottom of the finance tracker to see your transactions. You can use the search bar to find them by their name. 
+            <br>For each transaction, you can edit or delete it. When editing, ensure that the amount is positive. After you are finished editing or deleting the transaction, the current balance will reflect it.</p>
             </div>
-    <div class="faq">
-        <h3>Tip</h3>
-        <p>Make sure your initial balance is correct to avoid confusion later.</p>
-    </div>
+        <div class="faq">
+            <h3>FAQ</h3>
+            <p><strong> How can I tell the difference between an income and an expense? </strong>
+            <br>Incomes will be green, while expenses will be red.</p>
+        </div>
 </div>
 
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <div class="faq">
+        <h3>FAQ</h3>
+        <p><strong> I’m filtering by date and/or price, but I don’t see anything</strong>
+        <br>If you are filtering by date/price and don’t see anything, it means that
+        <br>1. Your inputs are invalid (ie. entering a high price of $20 and a low price of $50. The website will inform you when this occurs).
+        <br>2. There are no transactions in that range.
+        </p>
+    </div>
     <div class="content">
         <h2 id="sorting-filtering" class="sectionHeaders">Sorting and Filtering Transactions</h2>
         <p>To the bottom left are the filtering options. These include:</p>
@@ -89,35 +113,32 @@ Help Menu
             <li><b>Filter by Price</b>: Only include transactions within a price range. Expenses are treated as positive values.</li>
         </ul>
     </div>
-    <div class="faq">
-        <h3>Tip</h3>
-        <p>Make sure your initial balance is correct to avoid confusion later.</p>
-    </div>
 </div>
 
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
     <div class="content">
         <h2 id="viewing-summaries" class="sectionHeaders">Viewing Summaries</h2>
-        <p>At the top of the view transactions area, there is a view summaries area. This allows you to view the sum of your transactions at various intervals (weekly, monthly, annually).</p>
+        <p>At the top of the view transactions area, there is a view summaries area. This allows you to view the sum of your transactions at various intervals (weekly, monthly, annually).
+            <br> You can also have a custom period. You would have to specify the length (ex. 14 days), and a reference date (ex. 2/16/2025) which would be the start date of one cycle.
+            <br> The summaries will be based on the current filters. For example, if you only have incomes selected, the amounts in your summary will only reflect incomes. 
+            <br> If the amount is positive for a period, it will be green; if it's negative, it will be red, and there will be a negative sign.
+        </p>
           </div>
-    <div class="faq">
-        <h3>Tip</h3>
-        <p>Make sure your initial balance is correct to avoid confusion later.</p>
+        <div class="faq">
+        <h3>FAQ</h3>
+        <p><strong>How can I get an in-depth analysis of one summary period?</strong>
+        <br>To achieve that, you can go to view transactions and specify that summary period when filtering by date.    </p>
     </div>
 </div>
 
-<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+<div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container" style="justify-content: center;">
     <div class="content">
         <h2 id="making-pdf" class="sectionHeaders">Making a PDF</h2>
         <p>If you have at least one transaction, you can click the Export to PDF button. You will enter your name, and then, a PDF of the elements on screen (transactions/summaries, filtering), will be generated.</p>
             </div>
-    <div class="faq">
-        <h3>Tip</h3>
-        <p>Make sure your initial balance is correct to avoid confusion later.</p>
-    </div>
+
 </div>
 
-<!-- Repeat this pattern for all other sections -->
 
 <style>
     .sectionHeaders {
@@ -137,10 +158,14 @@ Help Menu
 
     .faq {
         width: 25%;
-        background-color: #f8f9fa;
+        background-color: #D3D3D3;
         padding: 15px;
         border-radius: 8px;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .h3 {
+        text-align: center;
     }
 
     @media (max-width: 768px) {

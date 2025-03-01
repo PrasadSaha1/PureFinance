@@ -1,11 +1,17 @@
+# forms for submitting information such as changing a username, contacting the developer, etc
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
-from .models import TransactionCategory
+
+# note - the clean functions within the forms are mainly for input validation
 
 class ChangeUsernameForm(forms.Form):
+    # for change_username, in settings
+
+    # make the information custom
     new_username = forms.CharField(
         label="New Username",
         max_length=150,
@@ -18,15 +24,18 @@ class ChangeUsernameForm(forms.Form):
         help_text="Enter your password for confirmation."
     )
 
+    # the clean functions will automatically be run everytime the form is submitted
     def clean_new_username(self):
-        # Get the new username from form data
+        # parse the username and ensure that it's accurate
         new_username = self.cleaned_data['new_username']
         
-        # Check if the username already exists
+        # if an error, it will not go through
+
+        # See if it already exists
         if User.objects.filter(username=new_username).exists():
             raise forms.ValidationError("This username is already taken.")
         
-        # Additional username validation (e.g., length, format)
+        # Make sure that the username isn't too long or short
         if len(new_username) < 8:
             raise forms.ValidationError("Username must be at least 8 characters long.")
         if len(new_username) > 150:
@@ -35,10 +44,13 @@ class ChangeUsernameForm(forms.Form):
         return new_username
 
     def clean_password(self):
+        # parse the password
         password = self.cleaned_data['password']
         return password
     
 class ChangePasswordForm(forms.Form):
+    # changing the password from the settings
+
     current_password = forms.CharField(
         label="Current Password",
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter current password'}),
@@ -56,9 +68,10 @@ class ChangePasswordForm(forms.Form):
     )
 
     def clean_new_password(self):
+        # parse the password
         password = self.cleaned_data['new_password']
 
-        # Validate the password using Django's password validation rules
+        # if an error, show it and don't continue
         try:
             password_validation.validate_password(password)
         except ValidationError as e:
@@ -74,22 +87,17 @@ class AddEmailForm(forms.Form):
     )
 
     def clean_email(self):
-        email = self.cleaned_data['email']
-        # Validate the email format
-        try:
+        email = self.cleaned_data['email']  # parse the email
+        try:  # ensures that the email is valid
             EmailValidator()(email)
         except ValidationError:
             raise forms.ValidationError("Enter a valid email address.")
         
         return email
 
-    class Meta:
-        model = TransactionCategory
-        fields = ['category_name', 'transaction_type']
-
 
 class ContactForm(forms.Form):
     name = forms.CharField(max_length=100, required=True)
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True)  # input validation is handled automatically
     subject = forms.CharField(required=False)
     message = forms.CharField(widget=forms.Textarea, required=True)

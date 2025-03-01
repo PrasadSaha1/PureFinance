@@ -25,6 +25,13 @@ Home
                 <button class="btn btn-secondary btn-lg">Log in</button>
             </a>
         </div>
+    {% else %}
+    <div style="margin-bottom: 100px;">
+        <h3 style="text-align: center; margin-top: 50px;">Manage your finances by clicking the button below!</h3>
+        <a href="/finance_tracker" class="d-block text-center mb-4">
+            <button class="btn btn-primary btn-lg">Go to Finance Tracker</button>
+        </a>
+    </div>
     {% endif %}
 
     <!-- Features Section -->

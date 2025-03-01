@@ -43,8 +43,10 @@ function getAllCategoryCheckboxes() {
                         newCheckboxes.forEach((checkbox) => {
                             categories.push(checkbox);
                             // add event listener to each newly added checkbox
-                            checkbox.addEventListener("change", filterTransactions);
-                        });
+                            checkbox.addEventListener("change", function() {
+                                filterTransactions(false);
+                            });
+                        });                        
                     }
                 }
             });
