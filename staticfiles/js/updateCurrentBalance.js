@@ -1,4 +1,4 @@
-function updateCurrentBalance() {
+function updateCurrentBalance(signedAmount = 0) {
     const balanceElement = document.getElementById("current-balance");
     const oldBalance = parseFloat(balanceElement.textContent.replace('$', '').replace(/,/g, '').trim());
 
@@ -27,6 +27,9 @@ function updateCurrentBalance() {
        const initialBalanceDisplayInTransactions = document.getElementById("initialBalanceDisplayInTransactions")
        initialBalanceDisplayInTransactions.textContent = `The Initial Balance was ${initialBalance}.`
     }
+
+    newBalance += signedAmount  // default for signedAmount is 0
+   // console.log(newBalance)
 
     // Only update and animate if the balance has changed
     if (oldBalance !== newBalance) {

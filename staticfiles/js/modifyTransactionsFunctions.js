@@ -2,7 +2,7 @@ function deleteTransaction(transactionId) {
     /* Deletes a transaction */
     const row = document.getElementById(`transaction-id-${transactionId}`);
     row.remove();  // remove it from sight
-    filterTransactions(); // this will also update the current balance
+    filterTransactions(false); // this will also update the current balance
 
     toggleNoCategoryFilter();  // see whether or not No Category is needed (if this was the only transaction with No Category, it is not needed anymore)
     // send the AJAX request
@@ -25,10 +25,14 @@ function toggleEditTransactionMode(transactionId, transactionType) {
     const categoryDropdowns = row.querySelectorAll('.edit-mode-category-dropdown'); // Get category dropdowns
 
     categoryDropdowns.forEach(dropdown => {
-        if (transactionType === "income_source" && dropdown.name === "income-categories-for-edit-transaction") {
-            dropdown.style.display = '';  // Show income categories
-        } else if (transactionType === "expense" && dropdown.name === "expense-categories-for-edit-transaction") {
-            dropdown.style.display = '';  // Show expense categories
+        if (transactionType === "income_source" && dropdown.name === "income-categories-for-edit-transaction" ||
+            transactionType === "expense" && dropdown.name === "expense-categories-for-edit-transaction"
+        ) {
+            if (dropdown.options.length){
+                dropdown.style.display = '';  // Show income categories
+            } else {
+                document.getElementById(`noCategoryEditTransaction-${transactionId}`).style.display = "block"  
+            }
         } else {
             dropdown.style.display = 'none';  // Hide the other dropdown
         }
@@ -66,7 +70,7 @@ function showError(field, message) {
     errorMessage.style.marginLeft = '10px';  // styling
     errorMessage.textContent = message;
     field.parentNode.appendChild(errorMessage);  // append the error message to the div
-    hasError = true;  // prevent the AJAX request 
+   // hasError = true;  // prevent the AJAX request 
 }
 
 function saveTransaction(transactionId, transactionType) {
@@ -87,9 +91,17 @@ function saveTransaction(transactionId, transactionType) {
             categoryField = row.querySelector('select[name="expense-categories-for-edit-transaction"]'); 
         } 
     });
+    console.log(categoryField)
 
     // remove whitespace
-    const category = categoryField.value.trim();
+
+
+    var category = categoryField.value.trim();
+    if (category === ""){
+        category = "No Category"
+    }
+
+    
     const date = dateField.value.trim();
     const name = nameField.value.trim();
     const amount = amountField.value.trim();
@@ -102,31 +114,39 @@ function saveTransaction(transactionId, transactionType) {
     // shows errors if they arise
 
     //  show error messages if the fields are empty or invalid
-    if (!category) {
-        showError(categoryField, 'Category is required');
-    }
+   // if (!category) {
+    //    showError(categoryField, 'Category is required');
+     //   hasError = true;
+    // }
     if (!date) {
         showError(dateField, 'Date is invalid');
+        hasError = true;
     }
     else {
         const [year] = date.split('-').map(Number);
         if (year < 1900 || year > 2100) {
             showError(dateField, '1900-2100 only');
+            hasError = true;
         }
     }
     if (!name) {
         showError(nameField, 'Name is required');
+        hasError = true;
     }
     else if (!/^[A-Za-z0-9 ]+$/.test(name)) {  // no symbols are allowed, but spaces are
         showError(nameField, "Must have no symbols")
+        hasError = true;
     }
 
     if (!amount) {  
         showError(amountField, 'Amount is required');
+        hasError = true;
     }
     else if (parseFloat(amountField.value.trim()) < 0){
         showError(amountField, 'Amount must be positive')
+        hasError = true;
     }
+
 
     // will not continue if there are error
     if (hasError) {
@@ -134,13 +154,16 @@ function saveTransaction(transactionId, transactionType) {
     }
 
     const elements = row.querySelectorAll('.view-mode');  // get all the elements (view mode)
-    elements[0].textContent = category;  // change the text for view mode
+        elements[0].textContent = category;  // change the text for view mode
+ 
+    
     elements[1].textContent = formatDate(date);
     elements[2].textContent = name;
     elements[3].textContent = `$${parseFloat(amount).toFixed(2)}`;
+    console.log()
 
     cancelEditTransaction(transactionId);  // the equivlant of the user clicking cancel to go back to view mode
-    filterTransactions();  // this will also update the current Balance 
+    filterTransactions(false);  // this will also update the current Balance 
 
 
     // send the AJAX request
