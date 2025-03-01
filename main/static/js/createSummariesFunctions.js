@@ -42,6 +42,22 @@ document.addEventListener("DOMContentLoaded", function () {
                     customOptions.style.display = 'none'; // hide custom options when other radio is selected
                 }
             });
+
+            // we need to attach the others to make the custom options go away if they are selected
+            const weeklyRadioButton = document.getElementById('weekly');
+            const monthlyRadioButton = document.getElementById('monthly');
+            const annuallyRadioButton = document.getElementById('annually');
+        
+            weeklyRadioButton.addEventListener('change', () => {
+                customOptions.style.display = 'none';
+            });
+            monthlyRadioButton.addEventListener('change', () => {
+                customOptions.style.display = 'none';
+            });
+            annuallyRadioButton.addEventListener('change', () => {
+                customOptions.style.display = 'none';
+            });
+        
 });
 
 
