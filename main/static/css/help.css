@@ -1,0 +1,39 @@
+.sectionHeaders {
+    text-align: center;
+    scroll-margin-top: 150px; /* Ensures that when you click a link from the top of the page, it goes to the correct place*/
+}
+
+.section-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;  /* A bit of a margin */
+}
+
+/* The main information for each area */
+.content {
+    width: 70%;
+}
+
+/* Make it smaller with a grey background */
+.faq {
+    width: 25%;
+    background-color: #D3D3D3;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.h3 {
+    text-align: center;
+}
+
+/* Make the website more responsive */
+@media (max-width: 768px) {
+    .section-container {
+        flex-direction: column;
+    }
+
+    .content, .faq {
+        width: 100%;
+    }
+}

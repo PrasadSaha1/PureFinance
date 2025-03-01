@@ -1,22 +1,30 @@
+<!-- This displays the info for adding transaction category. It is done twice - once for income sources, once for expenses
+It takes parameters to customize each half -->
+
 <div class="col-md-5">
     <h3>Categories for {{clean_transaction_type}}s</h3>
     <h6>These could include {{category_examples}}</h6>
 
+    <!-- list-group must be unique for each transaction type, so that's why var_transaction_type is included-->
+    <!-- var_transaction_type turns Income Source/Expense into income_source/expense-->
     <div class="category-container" id="list-group-{{var_transation_type}}">
         {% for category in iterable %}
             <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center category-item" id="category-{{category.id}}">
+                <!-- This is edit mode, when the user is renaming the category-->
                 <div style="display:none;" id="renameButtons">
                     <div class="d-flex align-items-center">
+                        <!-- only alphanumerical symbols are allowed -->
                         <input type="text" name="category_name" value="{{ category.category_name }}" class="form-control" style="width: 240px;" maxlength="25" pattern="^[A-Za-z0-9 ]*$">
                         <button type="submit" class="btn btn-success btn-sm ms-2" style="margin-left: 20px; margin-right: 5px;" onclick="renameCategorySubmit(this, '{{category.id}}', '{{var_transation_type}}')">Submit</button>
                         <button type="button" class="btn btn-secondary btn-sm ms-2" onclick="cancelRename(this)">Cancel</button>
                     </div>
-                    <!-- Error message now placed below the input and buttons -->
+                    <!-- an error message for each category when editing it -->
                     <p id="error-message-{{category.id}}" class="error-text" style="display: none; margin-top: 10px;">
                         Category name already taken!
                     </p>
                 </div>
                 
+                <!-- This is the main mode -->
                 <span>{{ category.category_name }}</span>
                 <div class="btn-group">
                     <button class="btn btn-warning btn-sm ms-2" onclick="renameCategory(this)">Rename</button>
@@ -24,12 +32,16 @@
                 </div>
             </div>
         {% empty %}
+            <!-- if there are none, again with var_transaction_type -->
             <h2 id="noCategoriesText_{{var_transation_type}}">Add some categories below!</h2>
         {% endfor %}
     </div>
+
+    <!-- Adding a new category-->
     <h4 class="text-center" style="margin-top: 30px;">Add {{clean_transaction_type}} Category</h4>
     <form id="add_category_{{var_transation_type}}">
         {% csrf_token %}
+        <!-- must be alphanumeric-->
         <div class="d-flex flex-column align-items-center mt-3">
             <input type="text" 
             id="new-category-name-{{var_transation_type}}" 
@@ -44,11 +56,13 @@
             <button type="submit" class="btn btn-primary btn-sm" style="font-size: 18px; padding: 5px 10px;">Add Category</button>
         </div>
     </form>
+    <!-- errors for adding a category-->
     <p id="error-message-category-taken-{{var_transation_type}}" class="error-text" style="display: none;">
         Category name already taken!
       </p>
+      <!-- will occur if the category is called something like "No Category"-->
       <p id="error-message-invalid-category-{{var_transation_type}}" class="error-text" style="display: none;">
-        Category name not allowed!
+        Category name not allowed!  
       </p>
     </div>
 

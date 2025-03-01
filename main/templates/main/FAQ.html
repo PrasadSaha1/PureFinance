@@ -5,13 +5,11 @@
 FAQ
 {% endblock %}
 
-
 {% block content %}
-
-
+<!-- Important - the rest of the website uses bootstrap 4, but this page uses bootstrap 5
+Bootstrap 5 is needed for accordians. The rest of the website was already made in bootstrap 4, so to avoid remaking it, bootstrap 5 is used for this page only -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 
 
 <div class="bg-light p-4 rounded shadow-sm">
@@ -23,22 +21,17 @@ FAQ
 
     <p><a href="/help">Help Menu</a></p>
     <p>Have another question? Contact us <a href="{% url 'contact_us' %}">here.</a></p>
-    <!--
-    <div class="mb-4">
-        <button id="expandAll" class="btn btn-primary" onclick="toggleAccordion(true)">Expand All</button>
-        <button id="collapseAll" class="btn btn-secondary" onclick="toggleAccordion(false)">Collapse All</button>
-    </div>
-    -->
 
     <!-- The Account System -->
     <h3 class="sectionHeaders">The Account System</h3>
-    <div class="accordion" id="accountSystemAccordion">
-        <div class="accordion-item">
-            <h3 class="accordion-header" id="q1">
+    <div class="accordion" id="accountSystemAccordion">  <!-- Each section uses the accordian class with a unique ID attached to it-->
+        <div class="accordion-item">  <!-- Each question is an accordian item -->
+            <h3 class="accordion-header" id="q1">  <!-- Customized with accordian-header and a unique id -->
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a1">
                     Why do I need to make an account?
                 </button>
             </h3>
+            <!-- Response to the question -->
             <div id="a1" class="accordion-collapse collapse" aria-labelledby="q1">
                 <div class="accordion-body">
                     PureFinance requires users to make an account to allow access to past data. <hr>
@@ -46,6 +39,7 @@ FAQ
                 </div>
             </div>
         </div>
+        <!--Repats for each question -->
         <div class="accordion-item">
             <h3 class="accordion-header" id="q2">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2">
@@ -82,6 +76,7 @@ FAQ
                 </button>
             </h3>
             <div id="a4" class="accordion-collapse collapse" aria-labelledby="q4">
+                <!-- hr adds a horizontal line to seperate text -->
                 <div class="accordion-body">
                     In this case, you can add that category as both an income and an expense.
                     <hr> Category names must generally be unique, but duplicates are allowed if they are in different transaction types (income/expense).
@@ -275,21 +270,17 @@ FAQ
 
 <style>
     body, html {
-        margin-top: -30px; /* Remove unwanted margin at the top */
+        margin-top: -30px; /* Remove unwanted margin from the top. Likely appears due to the use of bootstrap 5 */
     }
 
     .sectionHeaders {
-        margin-top: 20px; /* Add your desired margin-top here */
+        margin-top: 20px; 
     }
 
-
     .accordion-body {
-    border-bottom: 1px solid black; /* Adds a thin black border only on the bottom */
-    padding: 10px; /* Optional: Add padding to create space between the content and the border */
-}
-
-
-
+        border-bottom: 1px solid black; /* Adds a border to each question*/
+        padding: 10px; 
+    }
 </style>
 
 

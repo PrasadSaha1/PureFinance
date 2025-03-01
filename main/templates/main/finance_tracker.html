@@ -15,7 +15,7 @@ Finance Tracker
     {% block content %}
     <h1>Finance Tracker</h1>
 
-
+    <!-- The instructions div to show the website flowchart and link to the help menu. Can be toggled to not show-->
     <div id="instructionsDiv" class="bg-light p-4 rounded shadow-sm mt-4 text-center">
         <h2 style="display: inline;">Instructions</h2>
         <!-- The margin top is to ensure the y position of both elements are the same-->
@@ -26,35 +26,36 @@ Finance Tracker
         </div>
     </div>
 
+    <!-- Intial Balance-->
     <div class="bg-light p-4 rounded shadow-sm text-center mt-4">
         <div id="viewInitialBalance">
             <h4><strong>Initial Balance: </strong>
                 <span id="initialBalance" class="balance-text">${{ initial_balance|format_money }}</span>
                 
-                <!-- this is a text rather than a number as that is neccesary for input validation -->
+                <!-- This is a text rather than a number as that is neccesary for input validation -->
                 <input type="text" id="initialBalanceInput" class="form-control form-control-sm d-none" value="{{ initial_balance }}" step="0.01" style="width: 150px; display: inline-block; font-size: 18px;" oninput=validatePositiveNumber(this)>
                 
-                <button id="editInitialBalanceBtn" class="btn btn-primary btn-sm ms-2 edit-mode-initial-balance">Edit</button>
-                <button id="cancelInitialBalanceBtn" class="btn btn-secondary btn-sm ms-2 d-none">Cancel</button>
+                <!-- A negative margin top moves it up a little, which is needed to align with the text and input -->
+                <button id="editInitialBalanceBtn" style="margin-top: -5px;" class="btn btn-primary btn-sm ms-2 edit-mode-initial-balance">Edit</button>
+                <button id="cancelInitialBalanceBtn" style="margin-top: -5px;" class="btn btn-secondary btn-sm ms-2 d-none">Cancel</button>
             </h4>
-                <!-- Radio buttons for Positive/Negative -->
-                <div id="balanceSignOptions" class="d-none">
-                    <input type="radio" id="positiveBalance" name="balanceSign" value="positive" checked> Positive
-                    <input type="radio" id="negativeBalance" name="balanceSign" value="negative"> Negative
-                </div>
-        
-
+            <!-- Radio buttons for Positive/Negative -->
+            <div id="balanceSignOptions" class="d-none">
+                <input type="radio" id="positiveBalance" name="balanceSign" value="positive" checked> Positive
+                <input type="radio" id="negativeBalance" name="balanceSign" value="negative"> Negative
+            </div>
         </div>
         
         <div id="initialBalanceMessage" class="mt-3">It is recommended to fill in your net worth before your start using the finance tracker. <br>You can do this by clicking "Edit". <br>Be sure to indicate whether your net worth is positive or negative (meaning that you're in debt). <br>The actual number that you put must be positive.</div>
-
     </div>
     
+    <!-- Adding transaction categories -->
     <div class="bg-light p-4 rounded shadow-sm mt-4">
         <h2 style="margin-bottom: 20px;">Transaction Categories</h2>
         <div id="categories">
             <h5 style="margin-bottom: 30px;">These are the categories for your transactions, useful for identifying trends.</h5>
 
+            <!-- using category_item.html with parameters -->
             <div class="row justify-content-center">
                 {% include 'main/category_item.html' with clean_transaction_type="Income Source" var_transation_type="income_source" category_examples="work, allowance, etc." placeholder="Walmart Paycheck" iterable=income_categories  %}
                 {% include 'main/category_item.html' with clean_transaction_type="Expense" var_transation_type="expense" category_examples="food, hobbies, etc." placeholder="Video Games" iterable=expense_categories %}
@@ -64,12 +65,14 @@ Finance Tracker
         </div>
     </div>
 
+    <!-- adding transactions -->
     <div class="bg-light p-4 rounded shadow-sm mt-4">
         <h1>Add Transaction</h1>
         <form method="post" id="transaction-form" class="container">
             {% csrf_token %}
+
+            <!-- income or expense-->
             <div class="row justify-content-center align-items-center g-4">
-                <!-- Type section stays fixed -->
                 <div class="col-md-4">
                     <div class="d-flex justify-content-between">
                         <div class="form-check me-4">
@@ -84,8 +87,10 @@ Finance Tracker
                 </div>
             </div>
 
+            <!-- everything else, with a div so that it can be hidden-->
             <div id="addTransactionSettings">
                 <div class="row justify-content-center g-4">
+                    <!-- income and expense categories. Both are hidden at first, and will be shown based on the radio for income/expense-->
                     <div class="col-md-4" id="add_transaction_income_categories" style="display: none;">
                         <label for="income_category" class="form-label">Income Category</label>
                         <select id="income_category" name="income_category" class="form-select" required>
@@ -105,6 +110,7 @@ Finance Tracker
                         </select>
                     </div>
                 </div>
+                    <!-- the rest of the info (name, amount, date)-->
                     <div class="row justify-content-center g-3">
                         <div class="col-md-3">
                             <label for="transaction-name" class="form-label">Name</label>
@@ -115,15 +121,17 @@ Finance Tracker
                             <input type="date" id="transaction-date" name="transaction_date" class="form-control" min="1900-01-01" max="2100-12-31" required>
                         </div>
                         <div class="col-md-3">
+                            <!-- a text instead of a number is that is required for input validation to behave-->
                             <label for="transaction-amount" class="form-label">Amount</label>
                             <input type="text" id="transaction-amount" name="transaction_amount" class="form-control" placeholder="e.g., 1000" step="0.01" min="0" oninput=validatePositiveNumber(this) required>
                         </div>
                     </div>
-
+                    
+                    <!-- This is from the django view (updated dynamically), and needed to add categories later on with edit transaction-->
                     <input type="hidden" id="hidden-income-categories" name="hidden_income_categories" value="{{income_category_names}}">
                     <input type="hidden" id="hidden-expense-categories" name="hidden_expense_categories" value="{{expense_category_names}}">
 
-                    <!-- Centered Button -->
+                    <!-- Add -->
                     <div class="row justify-content-center m-3">
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-primary w-100">Add</button>
@@ -131,31 +139,28 @@ Finance Tracker
                     </div>
                 <p style="font-size: 18px; margin-top: 20px;">Transaction names may not exceed 50 characters or contain special symbols.<br>Amounts must be positive.</p>
             </div>
+
+            <!-- text that appears when there is nothing -->
             <h3 id="noIncomeCategoriesAddTransaction" style="display: none;">Add some income categories above before making transactions</h3>
             <h3 id="noExpenseCategoriesAddTransaction" style="display: none;">Add some expense categories above before making transactions</h3>
         </form>
 
-    
-        <!-- Success/Error Message Display -->
     </div>
     
     
-<!-- Top Section: Title and Description -->
-<div class="bg-light p-4 rounded shadow-sm">
-
-</div>
-
-<!-- Split Layout: 25% - 75% -->
- 
+<!-- View Transactions/summaries -->
+<!-- Split Layout: 25% for filtering - 75% for viewing-->
 <div class="row mt-3">
-    <!-- Left Section (25%) -->
+    <!-- Filtering n (25%) -->
     <div class="col-md-3">
         <div class="bg-light p-4 rounded shadow-sm">
             <h2>Filter transactions</h2>
+            <!-- include initial balance-->
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="includeInitialBalance" id="include-initial-balance" value="include-initial-balance" checked>
                 <label class="form-check-label" for="include-initial-balance">Include Initial Balance</label>
             </div>
+            <!-- Transaction Type (both, one, neither) -->
             <div>
                 <strong>Transaction Type</strong>
                 <div class="form-check">
@@ -168,12 +173,13 @@ Finance Tracker
                 </div>
             </div>
 
+            <!-- all the categories -->
             <div>
                 <strong style="display: block;">Categories (Income Source)</strong>
                 <div id="income-categories-filter">
-                    <!-- Hidden "No Category" checkbox for Income Source -->
                     <div class="form-check mt-2" style="display:none;" id="no-category-income_source-filter-div">
                         <input class="form-check-input income_source-category-filter" type="checkbox" name="categoryFilter" id="No Category-income_source-filter" value="No Category-income_source-filter" checked>
+                        <!-- The no category filter, needed as no category isn't an acutaly category. Dynamically added as needed-->
                         <label class="form-check-label" for="No Category-income_source-filter">No Category</label>
                     </div>
                     {% for category in income_categories %}
@@ -186,9 +192,9 @@ Finance Tracker
             
                 <strong>Categories (Expense)</strong>
                 <div id="expense-categories-filter">
-                    <!-- Hidden "No Category" checkbox for Expense -->
                     <div class="form-check mt-2" style="display:none;" id="no-category-expense-filter-div">
                         <input class="form-check-input expense-category-filter" type="checkbox" name="categoryFilter" id="No Category-expense-filter" value="No Category-expense-filter" checked>
+                        <!-- The no category filter, needed as no category isn't an acutaly category. Dynamically added as needed-->
                         <label class="form-check-label" for="No Category-expense-filter">No Category</label>
                     </div>
                     {% for category in expense_categories %}
@@ -201,6 +207,7 @@ Finance Tracker
                 </div>
             </div>
             
+            <!-- filter by date-->
             <div style="margin-top: 20px;">
                 <label>
                     <input type="checkbox" id="date-filter-checkbox">
@@ -218,6 +225,7 @@ Finance Tracker
                 <input type="date" id="end-date" name="end-date">
             </div>       
             
+            <!-- input validation - right below the inputs -->
             <label id="date-filter-error-1" class="text-danger" style="display: none;">
                 Please enter valid dates
             </label>
@@ -225,7 +233,7 @@ Finance Tracker
                 End date must be later than or equal to Start date
             </label>
             
-
+            <!-- Price filter -->
             <div style="margin-top: 20px;">
                 <label>
                     <input type="checkbox" id="price-filter-checkbox">
@@ -242,6 +250,7 @@ Finance Tracker
                 <label for="high-price">High Price:</label>
                 <input type="text" id="high-price" name="high-price" oninput=validatePositiveNumber(this) >
             </div>
+            <!-- Input Validation -->
             <label id="price-filter-error-1" class="text-danger" style="display: none;">
                 Please enter valid, positive numbers
             </label>
@@ -249,48 +258,59 @@ Finance Tracker
                 High Price must be greater than or equal to Low Price
             </label>
 
+            <!--Sorting-->
             <strong style="display: block;">Sort</strong>
 
+            <!-- default - byDateML (Date Most Least)-->
             <div class="form-check mt-2">
                 <input class="form-check-input byDateML" type="radio" name="transactionSort" id="byDateML" value="byDateML" checked>
                 <label class="form-check-label" for="byDateML">By Date (most to least recent)</label>
             </div>
 
+            <!-- byDateLM - date least to most -->
             <div class="form-check mt-2">
                 <input class="form-check-input byDateLM" type="radio" name="transactionSort" id="byDateLM" value="byDateLM">
                 <label class="form-check-label" for="byDateLM">By Date (least to most recent)</label>
             </div>
 
+            <!-- byNameAZ - alphabetical -->
             <div class="form-check mt-2">
                 <input class="form-check-input byNameAZ" type="radio" name="transactionSort" id="byNameAZ" value="byNameAZ">
                 <label class="form-check-label" for="byNameAZ">By Transaction Name (A-Z)</label>
             </div>
 
+            <!-- byNameZA - reverse-alphabetical -->
             <div class="form-check mt-2">
                 <input class="form-check-input byNameZA" type="radio" name="transactionSort" id="byNameZA" value="byNameZA">
                 <label class="form-check-label" for="byNameZA">By Transaction Name (Z-A)</label>
             </div>
 
+            <!-- byAmountLH - Amount Low to High -->
             <div class="form-check mt-2">
                 <input class="form-check-input byAmountLH" type="radio" name="transactionSort" id="byAmountLH" value="byAmountLH">
                 <label class="form-check-label" for="byAmountLH">By Amount (low to high)</label>
             </div>
 
+            <!-- byAmountHL - Amount High to Low -->
             <div class="form-check mt-2">
                 <input class="form-check-input byAmountHL" type="radio" name="transactionSort" id="byAmountHL" value="byAmountHL">
                 <label class="form-check-label" for="byAmountHL">By Amount (high to low)</label>
             </div>
             
+            <!-- Reset to default -->
             <button id="reset-all-button" class="btn btn-danger mt-3" onclick="resetFilters()">Reset All</button>
         </div>
     </div>
     
-    <!-- Right Section (75%) -->
+    <!-- Acutal transactions/summaries 75% Right -->
 
     <div class="col-md-9 bg-light p-4 rounded shadow-sm">
         <button class="btn btn-primary btn-sm me-2" id="toggle-view-all">View All Transactions</button>
         <button class="btn btn-secondary btn-sm" id="toggle-view-summaries">View Summaries</button>
+        <!-- Transactions -->
         <div id="view-all-transactions" style="display: block;">
+
+            <!-- Search Feature -->
             <div style="margin-bottom: 15px;">
                 <label for="transaction-search">Search Transactions:</label>
                 <input type="text" id="transaction-search" class="form-control" placeholder="Search transactions by name">
@@ -304,9 +324,11 @@ Finance Tracker
             <h6 id="initialBalanceDisplayInTransactions">The Initial Balance was ${{initial_balance|format_money}}. </h6>
             <h6 style="margin-bottom: 30px;">Selecting the "Include Initial Balance" filter will include this into the current balance.</h6>
 
+            <!-- updated dynamically with the js to display this-->
             <h2 id="noTransactionsText" style="display: none;">No Transactions found. Please add some or change your filters</h2>
 
             <table id="transactionsTable">
+                <!-- headers for the table -->
                 <thead>
                     <tr>
                         <th style="width: 0; padding: 0; border: none;"></th>
@@ -318,6 +340,7 @@ Finance Tracker
                     </tr>
                 </thead>
 
+                <!-- the actual transaction -->
                 <tbody>
                     {% for transaction in all_transactions %}
                         <tr class="{% if transaction.transaction_type == 'income_source' %}green{% else %}red{% endif %}" id="transaction-id-{{ transaction.id }}" name="transactions">
@@ -325,11 +348,15 @@ Finance Tracker
                                 <label hidden>{{transaction.transaction_type}}</label>
                             </td>
                             <td>
+                                <!-- view-mode is what the user usually sees, edit mode it what they see when editing the transaction -->
+
                                 {% if transaction.transaction_category.category_name %}
                                     <span class="view-mode">{{ transaction.transaction_category.category_name}}</span>
-                                {% else %}
+                                {% else %}  <!-- If the category was deleted -->
                                     <span class="view-mode" id="noCategoryEditTransaction-{{transaction.id}}">No Category</span>
                                 {% endif %}
+
+                                <!-- have both income and expense categories for everything, but only include one of them-->
                                 <select class="edit-mode-category-dropdown form-select" name="income-categories-for-edit-transaction" style="display:none;">
                                     {% for category in income_categories %}
                                         <option value="{{ category.category_name }}" {% if transaction.transaction_category and transaction.transaction_category.category_name == category.category_name %}selected{% endif %}>
@@ -345,6 +372,7 @@ Finance Tracker
                                     {% endfor %}
                                 </select>
                             </td>
+                            <!-- date, amount, and name-->
                             <td>
                                 <span class="view-mode">{{ transaction.transaction_date }}</span>
                                 <input type="date" class="edit-mode form-control" name="date" value="{{ transaction.transaction_date|date:'Y-m-d' }}" style="display:none;" required>
@@ -358,6 +386,7 @@ Finance Tracker
                                 <input type="text" step="0.01" class="edit-mode form-control" name="amount" value="{{ transaction.transaction_amount }}" style="display:none; padding: 5px;" required id="amount" oninput="validatePositiveNumber(this)">
                             </td>
                             <td>
+                                <!-- first two are shown by default, the next two aren't -->
                                 <button type="button" class="btn btn-primary btn-sm edit-btn" onclick="toggleEditTransactionMode('{{ transaction.id }}', '{{ transaction.transaction_type }}')">Edit</button>
                                 <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="deleteTransaction('{{ transaction.id }}')">Delete</button>
                                 <button type="button" class="btn btn-success btn-sm save-btn" onclick="saveTransaction('{{ transaction.id }}', '{{ transaction.transaction_type }}')" style="display:none;">Save</button>
@@ -368,9 +397,11 @@ Finance Tracker
                 </tbody>
             </table>
         </div>
+        <!-- Summaries -->
         <div id="view-summaries" style="display: none;">
             <h2>View Summaries</h2>
 
+            <!-- scope of summary (weekly, monthly, annually, custom)-->
             <h4>Type</h4>
             <form class="d-flex gap-3" style="justify-content: center;">
                 <div class="form-check form-check-inline">
@@ -412,9 +443,11 @@ Finance Tracker
             <h5 style="margin-top: 20px;">Combine these with the filtering/sorting on the left to form whatever you need</h5>
             <h5>Intervals with no transactions are excluded</h5>
 
+            <!-- when there are no summaries, this will be found-->
             <h2 id="noSummariesText" style="display: none;">No Summaries Found. Please change your summary settings, add some transations, or change your filters</h2>
 
             <table id="summariesTable">
+                <!-- headers -->
                 <thead>
                     <tr>
                         <th>Start Date</th>
@@ -423,11 +456,13 @@ Finance Tracker
                     </tr>
                 </thead>
 
+                <!-- will be dynamically added to-->
                 <tbody>
                 </tbody>
             </table>
 
         </div>
+        <!-- This will only be shown if there is at least one transaction (handled in the JS)-->
         <div id="export-options" style="margin-top: 20px;">
             <button class="btn btn-warning btn-sm me-2" id="export-to-pdf">Export to PDF</button>
         </div>
@@ -437,7 +472,7 @@ Finance Tracker
 
 </div>
 
-
+<!-- import js files -->
 {% block scripts %}
     <script src="{% static 'js/addCategoriesFunctions.js' %}"></script>
     <script src="{% static 'js/modifyCategoriesFunctions.js' %}"></script>
@@ -461,142 +496,13 @@ Finance Tracker
 {% include 'main/modal_confirmation.html' %}
 
 <script>
-</script>
-
-<script>
     window.onload = function() {
-        autofillDate(); // Call the function when the page loads
-        filterTransactions(false); // Call the function when the page loads
-        sortTransactions(); // Call the function when the page loads
-       // updateCurrentBalance();
-       toggleCategoryDivs(); 
+        autofillDate(); 
+        filterTransactions(false); // filter transactions and show the current balance
+        sortTransactions(); 
+        toggleCategoryDivs();  // could also show No Category
     };
     
 </script>
 
-<!--
-<style>
-    h1, h2, h3, h4, h5, h6, p {
-    text-align: center;
-}
-
-
-
-.larger-font {
-    font-size: 1.25rem; /* Adjust the size as needed */
-}
-
-
-.error-text {
-  color: red;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 10px;
-  border-radius: 5px;
-  display: inline-block;
-  margin-top: 10px;
-  width: 100%;
-}
-
-.error-icon {
-  margin-right: 5px;
-}
-
-.category-container {
-    height: 168px;
-    max-height: 168px; /* Adjust the height as needed */
-    overflow-y: auto; /* Enable vertical scrolling */
-}
-h5, h6 { 
-    font-weight: normal;
-}
-.list-group-item {
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    animation: fadeIn 3s;
-}
-
-.current-balance {
-    animation: fadeIn 3s;
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-.list-group-item.fadeOut {
-    animation: fadeOut 3s forwards; /* Fade out when class 'fadeOut' is added */
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.list-group-item:hover {
-    background-color: #f0f0f0;
-}
-
-.alert {
-    margin-top: 20px;
-}
-
-.btn-group {
-    display: inline-block;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border: 1px solid #ddd;
-    font-size: 16px;
-}
-
-th {
-    cursor: pointer;
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
-
-th:hover {
-    background-color: #ddd;
-}
-
-.sort-arrow {
-    margin-left: 8px;
-    font-size: 1em;
-}
-
-/* Hover effect on rows */
-tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Center table headers and content */
-table {
-    margin: 0 auto;
-}
-.green {
-    background-color: #d4edda;  /* Light green background */
-}
-
-.green:hover {
-    background-color: #9fd5b0;  /* Darker green on hover */
-}
-
-.red {
-    background-color: #f8d7da;  /* Light red background */
-}
-
-.red:hover {
-    background-color: #f1a7ac;  /* Darker red on hover */
-}
-</style>
--->
 {% endblock %}

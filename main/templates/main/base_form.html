@@ -1,17 +1,20 @@
+<!-- A template for the rest of the forms -->
+
 {% extends "main/base.html" %}
 
 {% block title %}
 {{ title }}
 {% endblock %}
 
-{% load crispy_forms_tags %}
-
+{% load crispy_forms_tags %} <!-- Used for styling the forms-->
+  
 
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-6">
             <div class="card shadow-sm p-4">
+                <!-- If there's a message, display it at the top -->
                 {% if message %}
                     <div class="alert {% if is_error %}alert-danger{% else %}alert-success{% endif %}" role="alert">
                         {{ message }}
@@ -19,9 +22,11 @@
                 {% endif %}            
                 <h1 class="text-center mb-4">{{ title }}</h1>
 
+                <!-- Allows the page to have additional information, usually links to other pages -->
                 {% block additional_links %}
                 {% endblock %}
 
+                <!-- The actual form, with crispy forms -->
                 <form method="POST" class="form-group">
                     {% csrf_token %}
                     {{ form|crispy }}

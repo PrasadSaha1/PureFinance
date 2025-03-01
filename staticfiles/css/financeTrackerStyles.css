@@ -1,14 +1,12 @@
 h1, h2, h3, h4, h5, h6, p {
-    text-align: center;
+    text-align: center; /* Center most of the text */
 }
 
-
-
-.larger-font {
-    font-size: 1.25rem; /* Adjust the size as needed */
+h5, h6 {  /* Bolded by default, but we want it normal */
+    font-weight: normal;
 }
 
-
+/* Displaying errors wil making categories */
 .error-text {
   color: red;
   font-weight: bold;
@@ -20,28 +18,26 @@ h1, h2, h3, h4, h5, h6, p {
   width: 100%;
 }
 
-.error-icon {
-  margin-right: 5px;
-}
 
 .category-container {
     height: 168px;
-    max-height: 168px; /* Adjust the height as needed */
-    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 168px; 
+    overflow-y: auto; 
 }
-h5, h6 { 
-    font-weight: normal;
-}
+
+/* Allow for the animation for a new category */
 .list-group-item {
     cursor: pointer;
     transition: background-color 0.3s ease;
     animation: fadeIn 3s;
 }
 
+/* Add an animation for the current balance when the screen first loads*/
 .current-balance {
     animation: fadeIn 3s;
 }
 
+/* define the animation */
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
@@ -67,6 +63,7 @@ h5, h6 {
   100% { opacity: 0; }
 }
 
+/* Change the background when a category is hoevered over*/
 .list-group-item:hover {
     background-color: #f0f0f0;
 }
@@ -75,13 +72,16 @@ h5, h6 {
     margin-top: 20px;
 }
 
+/* Display buttons next to each other*/
 .btn-group {
     display: inline-block;
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
+    margin: 0 auto;
 }
 
 th, td {
@@ -97,13 +97,9 @@ th {
     font-weight: bold;
 }
 
+/* change the color when hovered over */ 
 th:hover {
     background-color: #ddd;
-}
-
-.sort-arrow {
-    margin-left: 8px;
-    font-size: 1em;
 }
 
 /* Hover effect on rows */
@@ -111,10 +107,7 @@ tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Center table headers and content */
-table {
-    margin: 0 auto;
-}
+/* The next for are for the classes of incomes and expenses in transactions/summaries */
 .green {
     background-color: #d4edda;  /* Light green background */
 }

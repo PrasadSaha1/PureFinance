@@ -1,0 +1,32 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Make sure the navbar stays on top */
+    background-color: blue; /
+}
+
+/* Navbar links color */
+.navbar-nav .nav-link {
+    color: white; /* Change link text color */
+}
+
+/* Navbar links hover color */
+.navbar-nav .nav-link:hover {
+    color: #94eeee; /* Change color of links when hovered */
+}
+
+body {
+    padding-top: 60px; 
+    background: linear-gradient(135deg, #caf0f0, #7ce1e1); /* Gradient background for the whole website */
+    background-attachment: fixed; /* Keeps the gradient fixed while scrolling */
+    background-size: cover; /* Ensures the gradient covers the entire page */
+    color: #444444; /* Color for the text on the website */
+    margin-bottom: 30px;  /* The page goes down 30px below the minimum */
+}
+
+
+.navbar-brand {
+    color: white !important;
+}

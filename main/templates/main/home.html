@@ -13,6 +13,7 @@ Home
         <h3 style="text-align: center;">The Perfect Place to Manage Your Finances</h3>
     </div>
 
+    <!-- If not logged in, show the account info. Else, link to the finance tracker -->
     {% if is_logged_in is False %}
         <div>
             <h3 style="text-align: center; margin-top: 50px;">Create an account to get started!</h3>
@@ -34,31 +35,29 @@ Home
     </div>
     {% endif %}
 
-    <!-- Features Section -->
     <div class="features-section mt-5">
         <h2 style="text-align: center; margin-top: 50px;">Explore Our Features</h2>
 
-        <!-- Feature 1 -->
+        <!-- Three features, each with a static image -->
+
         <div class="d-flex align-items-center justify-content-between mt-4">
-            <img src="{% static 'images/homePageImage1.png' %}" alt="Feature 1" class="img-fluid rounded" style="width: 40%;">
+            <img src="{% static 'images/homePageImage1.png' %}" alt="View Transaction" class="img-fluid rounded" style="width: 40%;">
             <div class="text-content ms-4" style="width: 55%;">
                 <h3>View Transactions</h3>
                 <p>View your transactions and filter them to see exactly what you need</p>
             </div>
         </div>
 
-        <!-- Feature 2 -->
         <div class="d-flex align-items-center justify-content-between mt-4 flex-row-reverse">
-            <img src="{% static 'images/homePageImage2.png' %}" alt="Feature 2" class="img-fluid rounded" style="width: 40%;">
+            <img src="{% static 'images/homePageImage2.png' %}" alt="View Summaries" class="img-fluid rounded" style="width: 40%;">
             <div class="text-content me-4" style="width: 55%;">
                 <h3>View Financial Summaries</h3>
                 <p>View summaries of your transactions to track spending patterns</p>
             </div>
         </div>
 
-        <!-- Feature 3 -->
         <div class="d-flex align-items-center justify-content-between mt-4">
-            <img src="{% static 'images/homePageImage3.png' %}" alt="Feature 3" class="img-fluid rounded" style="width: 40%;">
+            <img src="{% static 'images/homePageImage3.png' %}" alt="Make PDFs" class="img-fluid rounded" style="width: 40%;">
             <div class="text-content ms-4" style="width: 55%;">
                 <h3>Make PDFs</h3>
                 <p>Make PDFs of your finances to share with others</p>

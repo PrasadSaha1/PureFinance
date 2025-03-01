@@ -1,16 +1,19 @@
+<!-- Make the confirmation modal (or a modal for anything else, such as entering a name for outpit reports)-->
+
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" id="modalContent">
-            <div class="modal-header">
+            <div class="modal-header">  <!-- Title of modal -->
                 <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
             </div>
-            <div class="modal-body" id="modalBody">
+            <div class="modal-body" id="modalBody"> <!-- default text -->
                 <p>Are you sure you want to proceed with this action?</p>
-                <label for="userInput">Enter reason:</label>
             </div>
+            <!-- input, only for output reports -->
             <div id="modalTextInput" style="display: none;">
                 <input type="text" class="form-control" id="userInput" placeholder="Type here..." required>
             </div>
+            <!-- if the field is empty -->
             <div id="modalTextError" style="color: red; display: none; font-size: 14px; margin-top: 5px;">
                 Please enter your name
             </div>

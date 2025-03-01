@@ -9,6 +9,7 @@ Settings
 <div id="content">
     {% block content %}
     <div class="bg-light p-4 rounded shadow-sm">
+        <!-- show a message, such as a success message, at the top of the screen-->
         {% if message %}
             <div class="alert alert-success" role="alert">
                 {{ message }}
@@ -18,7 +19,7 @@ Settings
         <h3 class="text-center">Logged in as {{ user.username }}</h3>
         <h3 class="text-center">Email: {{ user.email|format_email:email_level }}</h3>
 
-        <!-- Buttons Section -->
+        <!-- change the text based on the users' email level -->
         <div class="d-flex flex-column align-items-center mt-4">
             {% if email_level == "None" %}
                 <button class="btn btn-primary mb-3" onclick="window.location.href='/add_email/'">Add Email</button>
@@ -30,13 +31,12 @@ Settings
             {% endif %}
             <button class="btn btn-warning mb-3" onclick="window.location.href='/change_username/'">Change Username</button>
 
-            <!-- Change Password Button -->
             <button class="btn btn-info mb-3" onclick="window.location.href='/change_password/'">Change Password</button>
 
-            <!-- Spacer between Change Password and Log Out -->
+            <!-- Space between Change Password and Log Out -->
             <div class="my-3"></div>
 
-            <!-- Log Out Button -->
+            <!-- use the confirmational modal before preceeding -->
             <form method="post" action="{% url 'logout_view' %}" onsubmit="return handleFormSubmit(event, this, 'Are you sure that you would like to log out?');">
                 {% csrf_token %}
                 <button class="btn btn-danger mb-3">Log out</button>
@@ -49,12 +49,14 @@ Settings
 
         </div>
     </div>
+    <!-- link to the contact form -->
     <div class="bg-light p-4 rounded shadow-sm" style="margin-top: 20px; justify-items: center;">
         <h1>Options</h1>
         <button class="btn btn-info mb-3" style="margin-top: 10px" onclick="window.location.href='/contact_us'">Contact Us</button>
     </div>
 </div>
 
+<!-- needed at this is in a seperate file -->
 {% include 'main/modal_confirmation.html' %}
 
 {% block scripts %}

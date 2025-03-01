@@ -5,11 +5,16 @@
 Help Menu
 {% endblock %}
 
+{% block htmlhead %}
+<link rel="stylesheet" href="{% static 'css/help.css' %}">
+{% endblock htmlhead %}
+
 {% block content %}
 <div class="bg-light p-4 rounded shadow-sm" style="text-align: center;">
     <h1>Help Menu</h1>
     <img src="{% static 'images/pureFinanceFlowChart.png' %}" alt="Pure Finance Flow Chart" class="img-fluid rounded" style="max-width: 60%; display: block; margin: 0 auto;">
 
+    <!-- Links to headers -->
     <div>
         <h2>Jump to what you need</h2>
         <a href="#account-system">The Account System</a> <br>
@@ -26,9 +31,10 @@ Help Menu
     
 </div>
 
+<!-- The Account System -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
-    <div class="content">
-        <h2 id="account-system" class="sectionHeaders">The Account System</h2>
+    <div class="content">  <!-- The main section is in the content class, around 70% -->
+        <h2 id="account-system" class="sectionHeaders">The Account System</h2>  <!-- id to be idenified, and class for styling-->
         <p>To use the website, you must make an account. If you are not currently logged in, you can go to the home page and click Create Account. 
             <br>From here, you must enter in a unique username and valid password. 
             <br>From there, you can access the finance tracker. By clicking the button on the home page or the link in the header.
@@ -39,6 +45,7 @@ Help Menu
             <br>Verifying your email is optional but is recommended for security purposes. 
         </p>
     </div>
+    <!-- FAQ on the right, around 25%-->
     <div class="faq">
         <h3>FAQ</h3>
         <p><strong>Why do I need to make an account?</strong>
@@ -46,6 +53,7 @@ Help Menu
     </div>
 </div>
 
+<!-- Making and Initial Balance. There is no faq, so this is centered -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container" style="justify-content: center;">
     <div class="content">
         <h2 id="initial-balance" class="sectionHeaders">Making an Initial Balance</h2>
@@ -55,7 +63,9 @@ Help Menu
     </div>
 </div>
 
+<!-- Making Transaction Categories -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
+    <!-- faq is on the left to improve the website's feel-->
     <div class="faq">
         <h3>FAQ</h3>
         <p><strong>What if I have a category that is both an income and an expense?</strong>
@@ -70,6 +80,7 @@ Help Menu
     </div>
 </div>
 
+<!-- Making Transactions -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container" style="justify-content: center;">
     <div class="content">
         <h2 id="making-transactions" class="sectionHeaders">Making Transactions</h2>
@@ -80,6 +91,7 @@ Help Menu
     </div>
 </div>
 
+<!-- Viewing, Editing, and Deleting Transactions -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
     <div class="content">
         <h2 id="editing-transactions" class="sectionHeaders">Viewing, Editing, and Deleting Transactions</h2>
@@ -93,6 +105,7 @@ Help Menu
         </div>
 </div>
 
+<!-- Filtering and Sorting Transactions -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
     <div class="faq">
         <h3>FAQ</h3>
@@ -115,6 +128,7 @@ Help Menu
     </div>
 </div>
 
+<!-- Viewing Summaries -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container">
     <div class="content">
         <h2 id="viewing-summaries" class="sectionHeaders">Viewing Summaries</h2>
@@ -131,54 +145,12 @@ Help Menu
     </div>
 </div>
 
+<!-- Making PDFs -->
 <div class="bg-light text-dark p-4 rounded shadow-sm mt-3 section-container" style="justify-content: center;">
     <div class="content">
         <h2 id="making-pdf" class="sectionHeaders">Making a PDF</h2>
         <p>If you have at least one transaction, you can click the Export to PDF button. You will enter your name, and then, a PDF of the elements on screen (transactions/summaries, filtering), will be generated.</p>
-            </div>
-
+    </div>
 </div>
-
-
-<style>
-    .sectionHeaders {
-        text-align: center;
-        scroll-margin-top: 150px; /* Adjust based on your header height */
-    }
-
-    .section-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-    }
-
-    .content {
-        width: 70%;
-    }
-
-    .faq {
-        width: 25%;
-        background-color: #D3D3D3;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .h3 {
-        text-align: center;
-    }
-
-    @media (max-width: 768px) {
-        .section-container {
-            flex-direction: column;
-        }
-
-        .content, .faq {
-            width: 100%;
-        }
-    }
-</style>
-
-
 
 {% endblock %}
