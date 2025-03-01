@@ -19,34 +19,35 @@ function updateCurrentBalance(signedAmount = 0) {
         }
     });
 
+    // if there's the intial balance include, add that
     const includeInitialBalanceCheckbox = document.getElementById("include-initial-balance")
     if (includeInitialBalanceCheckbox.checked){
         var initialBalance = document.getElementById("initialBalance").textContent;
         newBalance += parseFloat(initialBalance.replace('$', '').replace(/,/g, '').trim());
 
+        // update the text 
        const initialBalanceDisplayInTransactions = document.getElementById("initialBalanceDisplayInTransactions")
        initialBalanceDisplayInTransactions.textContent = `The Initial Balance was ${initialBalance}.`
     }
 
     newBalance += signedAmount  // default for signedAmount is 0
-   // console.log(newBalance)
 
-    // Only update and animate if the balance has changed
+    // only update and animate if the balance has changed
     if (oldBalance !== newBalance) {
         balanceElement.innerHTML = formatMoney(newBalance);  // update balance display
 
-        // Create the animation observer and reset animation only if balance has changed
+        // make an observer for the animation
         const animationObserver = new MutationObserver(() => {
             // reapply the fadeIn animation
             balanceElement.style.animation = 'none'; // reset animation
             balanceElement.offsetHeight; // trigger reflow to restart the animation
             balanceElement.style.animation = 'fadeIn 3s'; // reapply animation
 
-            // Disconnect the observer after it runs once
+            // make it only run once
             animationObserver.disconnect();
         });
 
-        // configure the observer to watch for changes in text content
+        // watch for changes in the text
         animationObserver.observe(balanceElement, {
             characterData: true,
             childList: true,

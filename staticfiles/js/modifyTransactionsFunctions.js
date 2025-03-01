@@ -160,7 +160,6 @@ function saveTransaction(transactionId, transactionType) {
     elements[1].textContent = formatDate(date);
     elements[2].textContent = name;
     elements[3].textContent = `$${parseFloat(amount).toFixed(2)}`;
-    console.log()
 
     cancelEditTransaction(transactionId);  // the equivlant of the user clicking cancel to go back to view mode
     filterTransactions(false);  // this will also update the current Balance 

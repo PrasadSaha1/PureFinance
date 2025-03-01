@@ -3,13 +3,14 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('#include-initial-balance, input[name="transactionTypeFilter"], input[name="categoryFilter"], #date-filter-checkbox, #price-filter-checkbox, #low-price, #high-price, #start-date, #end-date')
         .forEach(input => {
             input.addEventListener("change", function() {
-                filterTransactions(false);
+                filterTransactions(false);  // false means DO update the current balance
             });
         });
 });
 
 
 function getCheckedTransactionTypes() {
+    // sees whether or not a transaction type (income/expense) is checked
     const transactionTypeCheckboxes = document.querySelectorAll('input[name="transactionTypeFilter"]');
     let selectedTypes = [];  
     transactionTypeCheckboxes.forEach(checkbox => {
@@ -21,6 +22,7 @@ function getCheckedTransactionTypes() {
 }
 
 function getCheckedCategories() {
+    // sees whether or not a category is checked
     const categoryCheckboxes = getAllCategoryCheckboxes();  // get all categories, including newly created ones
     let selectedCategories = [];
     categoryCheckboxes.forEach(checkbox => {
@@ -31,7 +33,7 @@ function getCheckedCategories() {
     return selectedCategories;
 }
 
-function filterTransactions(preventUpdateCurrentBalance) {
+function filterTransactions(preventUpdateCurrentBalance, singleTransactionInfo) {
     toggleCategoryState();  // toggle whether or not checkboxes are greyed out based on whether or not income/expense is selected to be shown
     toggleNoCategoryFilter();  // determine if no category should be shown
     var isError = false;  // if there's an error, don't shown anything
@@ -78,49 +80,53 @@ function filterTransactions(preventUpdateCurrentBalance) {
     let lowPrice, highPrice, strLowPrice, strHighPrice;
     const priceToggle = document.getElementById('price-filter-checkbox');
     if (priceToggle.checked){
-        strLowPrice = document.getElementById('low-price').value;
+        strLowPrice = document.getElementById('low-price').value;  
         strHighPrice = document.getElementById('high-price').value;
 
-        
-
-        /*
-        if (strLowPrice === "" || strHighPrice === ""){
-            isError = true;
-            document.getElementById('price-filter-error-1').style.display = "block";
-        }
-        else{
-        */
-    
-
-        lowPrice = parseFloat(strLowPrice);
+        lowPrice = parseFloat(strLowPrice);  // turn from str to float
         highPrice = parseFloat(strHighPrice);
-        if(lowPrice <= highPrice && !strLowPrice.includes("-") && !strHighPrice.includes("-")){  
-            // includePrice = true;
+        if(lowPrice <= highPrice){    // if it's valid, hide the errors
             document.getElementById('price-filter-error-1').style.display = "none";
             document.getElementById('price-filter-error-2').style.display = "none";
-           // document.getElementById('price-filter-error-3').style.display = "none";
         }
         else {
-            isError = true;
-            if (strLowPrice.includes("-") || strLowPrice === "" || strHighPrice.includes("-") || strHighPrice === "") {
+            isError = true;  // there's an error, so don't show any transactions
+            if (strLowPrice === ""  || strHighPrice === "") {  // if one of them is empty, so the "Please enter Both Fields" error
                 document.getElementById('price-filter-error-1').style.display = "block";
             } else{
                 document.getElementById('price-filter-error-1').style.display = "none";
             }
             
+            // if the low price is greater than the high price, show the "Prices must make sense" error
             if (lowPrice > highPrice){
                 document.getElementById('price-filter-error-2').style.display = "block";
             } else {
                 document.getElementById('price-filter-error-2').style.display = "none";
             }
         }
-    } else {
+    } else {  // if the toggle isn't checked, hide the errors
         document.getElementById('price-filter-error-1').style.display = "none";
         document.getElementById('price-filter-error-2').style.display = "none";
     }
 
     let transactions = getAllTransactions();  // get all transactions, including newly created ones
     var noTransactions = true;  // display the no transactions if this stays true
+
+    if (singleTransactionInfo) {  // if the list of information is given
+        var transactionType = singleTransactionInfo[0];  // information as given
+        var transactionCategory = singleTransactionInfo[1];
+        var transactionDate = singleTransactionInfo[2];
+        var transactionAmount = singleTransactionInfo[3]
+
+
+        if ((selectedTypes.includes(`${transactionType}-filter`)) && // income_source or expense
+        (selectedCategories.includes(`${transactionCategory}-${transactionType}-filter`)) &&  // category is seleected (transactionType included in name in case of duplicates across types)
+        (!dateToggle.checked || (transactionDate >= startDate && transactionDate <= endDate)) &&  // date is not checked or date is within range
+        (!priceToggle.checked || (transactionAmount >= lowPrice && transactionAmount <= highPrice))) {  // price is not checked or price is within range
+            return true
+        } 
+        return false;
+    }
 
 
     transactions.forEach(transaction => {
@@ -151,7 +157,7 @@ function filterTransactions(preventUpdateCurrentBalance) {
         document.getElementById('noTransactionsText').style.display = "none";
         document.getElementById("transactionsTable").style.display = "table";
     }
-    createSummaries();
+    createSummaries();  // make new summaries for the new filters
 
     // preventUpdateCurrentBalance will be true if it comes from addTransaction as the balance is handled differnetly there
     if (!preventUpdateCurrentBalance) {
@@ -251,7 +257,7 @@ function resetFilters() {
 
     document.getElementById('byDateML').checked = true;  // sort by date most recent to least recent
 
-    filterTransactions(false);  // undo the filters and sorts
+    filterTransactions(false, );  // undo the filters and sorts
     sortTransactions();
 }
 
@@ -295,103 +301,5 @@ function toggleNoCategoryFilter(){
 
 }
 
-
-function checkIfVisible(transactionType, transactionCategory, transactionName, transactionDate, transactionAmount){
-    var isError = false;  // if there's an error, don't shown anything
-
-    // get the two checkboxes for income and expense
-    selectedTypes = getCheckedTransactionTypes();
-    selectedCategories = getCheckedCategories();
-
-
-    let startDate, endDate;
-
-    const dateToggle = document.getElementById('date-filter-checkbox');
-    if (dateToggle.checked) {
-        startDate = document.getElementById('start-date').value;  // get the start and end dates
-        endDate = document.getElementById('end-date').value;
-
-        
-        // check if the dates are valid. If an invalid date (ex. 04-31-2025), the date will be empty
-        if (endDate >= startDate && startDate != "" && endDate != "") {
-            document.getElementById('date-filter-error-1').style.display = "none";
-            document.getElementById('date-filter-error-2').style.display = "none";
-        }
-        else{  // if invalid
-            isError = true;
-
-            // determine the type of error
-            if (startDate === "" || endDate === ""){
-                document.getElementById('date-filter-error-1').style.display = "block";
-            } else {
-                document.getElementById('date-filter-error-1').style.display = "none";
-            }
-            if (endDate < startDate && startDate && endDate){  // make sure the dates are valid to prevent confusing behavior
-                document.getElementById('date-filter-error-2').style.display = "block";
-            } else {
-                document.getElementById('date-filter-error-2').style.display = "none";
-            }
-        }
-    } else {
-        // if the date filter is not checked, don't show any errors
-        document.getElementById('date-filter-error-1').style.display = "none";
-        document.getElementById('date-filter-error-2').style.display = "none";
-    }
-
-    let lowPrice, highPrice, strLowPrice, strHighPrice;
-    const priceToggle = document.getElementById('price-filter-checkbox');
-    if (priceToggle.checked){
-        strLowPrice = document.getElementById('low-price').value;
-        strHighPrice = document.getElementById('high-price').value;
-
-        
-
-        /*
-        if (strLowPrice === "" || strHighPrice === ""){
-            isError = true;
-            document.getElementById('price-filter-error-1').style.display = "block";
-        }
-        else{
-        */
-    
-
-        lowPrice = parseFloat(strLowPrice);
-        highPrice = parseFloat(strHighPrice);
-        if(lowPrice <= highPrice && !strLowPrice.includes("-") && !strHighPrice.includes("-")){  
-            // includePrice = true;
-            document.getElementById('price-filter-error-1').style.display = "none";
-            document.getElementById('price-filter-error-2').style.display = "none";
-           // document.getElementById('price-filter-error-3').style.display = "none";
-        }
-        else {
-            isError = true;
-            if (strLowPrice.includes("-") || strLowPrice === "" || strHighPrice.includes("-") || strHighPrice === "") {
-                document.getElementById('price-filter-error-1').style.display = "block";
-            } else{
-                document.getElementById('price-filter-error-1').style.display = "none";
-            }
-            
-            if (lowPrice > highPrice){
-                document.getElementById('price-filter-error-2').style.display = "block";
-            } else {
-                document.getElementById('price-filter-error-2').style.display = "none";
-            }
-        }
-    } else {
-        document.getElementById('price-filter-error-1').style.display = "none";
-        document.getElementById('price-filter-error-2').style.display = "none";
-    }
-
-    const formattedDate = new Date(transactionDate).toISOString().split('T')[0];
-
-    if ((selectedTypes.includes(`${transactionType}-filter`)) && // income_source or expense
-    (selectedCategories.includes(`${transactionCategory}-${transactionType}-filter`)) &&  // category is seleected (transactionType included in name in case of duplicates across types)
-    (!dateToggle.checked || (formattedDate >= startDate && formattedDate <= endDate)) &&  // date is not checked or date is within range
-    (!priceToggle.checked || (transactionAmount >= lowPrice && transactionAmount <= highPrice))) {  // price is not checked or price is within range
-        return true
-    } 
-    return false;
-
-}
 
  

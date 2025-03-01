@@ -4,51 +4,57 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function createGeneralPDF() {
+    // this will happen whether it's a summaries or transactions PDF
+
+    // have an input in the modal
     showConfirmationModal("Please enter your name: ", true).then((userName) => {
-        if (userName) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.setFont("times") // times new roman
+        if (userName) {   // if they don't cancel
+            const { jsPDF } = window.jspdf;  // make the PDF with jspdf
+            const doc = new jsPDF();
+            doc.setFont("times") // times new roman
 
+            // see if they were viewing transactions or summaries
+            const toggleViewAll = document.getElementById("toggle-view-all")
+            if (toggleViewAll.classList.contains("btn-primary")) {
+                var reportType = "rawTransactions"
+            } else {
+                var reportType = "summaries"
+            } 
 
-        const toggleViewAll = document.getElementById("toggle-view-all")
-        if (toggleViewAll.classList.contains("btn-primary")) {
-            var reportType = "rawTransactions"
-        } else {
-            var reportType = "summaries"
+            createHeader(doc, userName);
+            doc.setFontSize(12);
+
+            // defining constants
+            const PAGEWIDTH = doc.internal.pageSize.getWidth();
+            const PAGEHEIGHT = doc.internal.pageSize.getHeight();
+            const MARGINBOTTOM = 20;
+
+            // createReportInformation shows all the info before the tables with the transactions/summaries
+            var yPos = createReportInformation(doc, reportType)
+
+            if (reportType === "rawTransactions"){
+                makeTransactionsTable(doc, yPos, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM);
+            } else {
+                makeSummariesTable(doc, yPos, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM);
+            }
         } 
-        
-
-        createHeader(doc, userName);
-        doc.setFontSize(12);
-
-        // defining constants
-        const PAGEWIDTH = doc.internal.pageSize.getWidth();
-        const PAGEHEIGHT = doc.internal.pageSize.getHeight();
-        const MARGINBOTTOM = 20;
-
-        var yPos = createReportInformation(doc, reportType)
-
-        if (reportType === "rawTransactions"){
-            makeTransactionsTable(doc, yPos, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM);
-        } else {
-            makeSummariesTable(doc, yPos, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM);
-        }
-    } 
 });
 }
 
-function makeTransactionsTable(doc, yPos, PAGEWIDTH, pageHeight, marginBottom){
+function makeTransactionsTable(doc, yPos, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM){
     /* This makes the PDF for when the user has transactions selected, rather than summaries*/
     // Fetch transaction data
     const transactions = getAllVisibleTransactions();
     
     yPos += 20
-    const currentBalance = document.getElementById("current-balance").textContent;
-    doc.setFont("times", "bold")
-    createSingleText(doc, `Current Balance: $${currentBalance}`, 20, yPos)
-    doc.setFont("times", "normal")
 
+    // display the current Balance
+    const currentBalance = document.getElementById("current-balance").textContent;
+    doc.setFont("times", "bold")  // switch to bold
+    createSingleText(doc, `Current Balance: $${currentBalance}`, 20, yPos)
+    doc.setFont("times", "normal") // switch back to normal
+
+    // if there's an intial balance, display it
     let includeInitialBalance = document.getElementById("include-initial-balance").checked;
     var initialBalance = document.getElementById("initialBalance").textContent;
     if (includeInitialBalance) {
@@ -57,16 +63,16 @@ function makeTransactionsTable(doc, yPos, PAGEWIDTH, pageHeight, marginBottom){
     }
 
     yPos += 10
-    // Add transactions to the PDF
     doc.setFontSize(12);
     
-    // Draw table header with borders
-    const columnWidths = [40, 30, 60, 30]; // Widths of each column
+    // draw table header with borders
+    const columnWidths = [40, 30, 60, 30]; // widths of each column
     const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0); // 160 - sum of columnwidths
 
     let incomeTransactions = [];
     let expenseTransactions = []
 
+    // add transactions to either income or expense transactions
     transactions.forEach((transaction) => {
         const transactionType = transaction.querySelector('td:nth-child(1)').textContent.trim();
         if (transactionType === "income_source"){
@@ -74,71 +80,71 @@ function makeTransactionsTable(doc, yPos, PAGEWIDTH, pageHeight, marginBottom){
         } else {
             expenseTransactions.push(transaction)
         }
-
     });
 
-
+    // display the incomes
     yPos = makeTableHeader(doc, "Incomes", yPos, PAGEWIDTH, tableWidth, columnWidths)
     incomeTransactions.forEach(transaction => {
-        yPos = addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth, PAGEWIDTH, pageHeight, marginBottom)
+        // addTransactionToTable returns the new yPos
+        yPos = addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM)
     });
 
     yPos += 10
+
+    // display the header
     yPos = makeTableHeader(doc, "Expenses", yPos, PAGEWIDTH, tableWidth, columnWidths)
     expenseTransactions.forEach(transaction => {
-        yPos = addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth, PAGEWIDTH, pageHeight, marginBottom)
+        // addTransactionToTable returns the new yPos
+        yPos = addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM)
     });
 
 
-    // Save the PDF
+    // save the PDF
     doc.save("transactions.pdf");
 }
 
-function makeSummariesTable(doc, yPos, PAGEWIDTH, pageHeight, marginBottom){
-     
-    const summaries = document.querySelectorAll('#summariesTable tbody tr'); // Get all rows (tr) in tbody
+function makeSummariesTable(doc, yPos, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM){
+    const summaries = document.querySelectorAll('#summariesTable tbody tr'); // get all rows (tr) in tbody
 
     yPos += 20
     
-    // Draw table header with borders
-    const columnWidths = [30, 30, 30]; // Widths of each column
+    // draw table header with borders
+    const columnWidths = [30, 30, 30]; // widths of each column
     const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0); // 160 - sum of columnwidths
 
     yPos = makeTableHeader(doc, "Summaries", yPos, PAGEWIDTH, tableWidth, columnWidths)
     summaries.forEach(summary => {
-        yPos = addSummaryToTable(doc, summary, yPos, columnWidths, tableWidth, PAGEWIDTH, pageHeight, marginBottom)
+        yPos = addSummaryToTable(doc, summary, yPos, columnWidths, tableWidth, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM)
     });
 
     doc.save("summaries.pdf");
 }
 
-function addSummaryToTable(doc, summary, yPos, columnWidths, tableWidth, PAGEWIDTH, pageHeight, marginBottom){
-    const startDate = summary.querySelector('td:nth-child(1)').textContent.trim();
+function addSummaryToTable(doc, summary, yPos, columnWidths, tableWidth, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM){
+    const startDate = summary.querySelector('td:nth-child(1)').textContent.trim();  // get the info about the summary
     const endDate = summary.querySelector('td:nth-child(2)').textContent.trim();
     const summaryAmount = summary.querySelector('td:nth-child(3)').textContent.trim();
 
-
-    currentXPos = (PAGEWIDTH - tableWidth) / 2 + 5;
+    currentXPos = (PAGEWIDTH - tableWidth) / 2 + 5;  // make the table centered
     doc.text(startDate, currentXPos, yPos);
-     currentXPos += columnWidths[0];
-     doc.text(endDate, currentXPos, yPos);
-     currentXPos += columnWidths[1];
-     doc.text(summaryAmount, currentXPos, yPos);
- 
-     // Add border for the current row
-     doc.rect((PAGEWIDTH - tableWidth) / 2, yPos - 5, tableWidth, 10);
- 
-     yPos += 10; // Add space for the next row
-     if (yPos + marginBottom > pageHeight) {
-         doc.addPage(); // Add a new page
-         yPos = 30; // Reset to the top of the new page
-     }
-     return yPos
+    currentXPos += columnWidths[0];  // add to the xPos
+    doc.text(endDate, currentXPos, yPos);
+    currentXPos += columnWidths[1];
+    doc.text(summaryAmount, currentXPos, yPos);
 
+    // add border for the current row
+    doc.rect((PAGEWIDTH - tableWidth) / 2, yPos - 5, tableWidth, 10);
+
+    yPos += 10; // add space for the next row
+    if (yPos + MARGINBOTTOM > PAGEHEIGHT) {  // if it extends beyond the page
+        doc.addPage(); // add a new page
+        yPos = 30; // reset to the top of the new page
+    }
+    return yPos  // make it easier to change the yPos
 }
 
 function makeTableHeader(doc, type, yPos, PAGEWIDTH, tableWidth, columnWidths){
-    if (type === "Summaries") {
+    if (type === "Summaries") {  // based on the type of PDF
         var tableHeader = ["Start Date", "End Date", "Amount"];
     } else {
         var tableHeader = ["Category", "Date", "Name", "Amount"];
@@ -146,7 +152,7 @@ function makeTableHeader(doc, type, yPos, PAGEWIDTH, tableWidth, columnWidths){
 
     createSingleText(doc, type, 20, yPos)
     doc.setFontSize(12)
-    let currentXPos = (PAGEWIDTH - tableWidth) / 2 + 5; // Center the table
+    let currentXPos = (PAGEWIDTH - tableWidth) / 2 + 5; // center the table
     doc.setFont("times", "bold");
 
     yPos += 10;
@@ -154,9 +160,9 @@ function makeTableHeader(doc, type, yPos, PAGEWIDTH, tableWidth, columnWidths){
         doc.text(header, currentXPos, yPos);
         currentXPos += columnWidths[colIndex];
     });
-    doc.setFont("times", "normal"); // Revert to normal font for data
+    doc.setFont("times", "normal"); // revert to normal font for data
     
-    // Draw horizontal line below the header
+    // draw horizontal line below the header
     doc.rect((PAGEWIDTH - tableWidth) / 2, yPos - 5, tableWidth, 8);
     yPos += 8
 
@@ -164,20 +170,17 @@ function makeTableHeader(doc, type, yPos, PAGEWIDTH, tableWidth, columnWidths){
 
 }
 
-function addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth, PAGEWIDTH, pageHeight, marginBottom) {
-    //  const transactionType = transaction.querySelector('td:nth-child(1)').textContent.trim();
+function addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth, PAGEWIDTH, PAGEHEIGHT, MARGINBOTTOM) {
       var transactionCategory = transaction.querySelector('td:nth-child(2) .view-mode').textContent.trim();
       const transactionDate = transaction.querySelector('td:nth-child(3)').textContent.trim();
       var transactionName = transaction.querySelector('td:nth-child(4)').textContent.trim();
       const transactionAmount = transaction.querySelector('td:nth-child(5)').textContent.trim();
   
+      // limit the name and category after some time to avoid it form overflowing
       var transactionName = transactionName.length > 30 ? transactionName.substring(0, 30) + '...' : transactionName;
       var transactionCategory = transactionCategory.length > 18 ? transactionCategory.substring(0, 15) + '...' : transactionCategory;
-
-     // let formattedTransactionType = transactionType === "income_source" ? "Income" : "Expense";
   
-      // Draw each row
-     // doc.text(formattedTransactionType, currentXPos, yPos);
+      // draw each row
      currentXPos = (PAGEWIDTH - tableWidth) / 2 + 5;
      doc.text(transactionCategory, currentXPos, yPos);
       currentXPos += columnWidths[0];
@@ -187,66 +190,69 @@ function addTransactionToTable(doc, transaction, yPos, columnWidths, tableWidth,
       currentXPos += columnWidths[2];
       doc.text(transactionAmount, currentXPos, yPos);
   
-      // Add border for the current row
+      // add border for the current row
       doc.rect((PAGEWIDTH - tableWidth) / 2, yPos - 5, tableWidth, 10);
   
-      yPos += 10; // Add space for the next row
-      if (yPos + marginBottom > pageHeight) {
-          doc.addPage(); // Add a new page
-          yPos = 30; // Reset to the top of the new page
+      yPos += 10; // add space for the next row
+      if (yPos + MARGINBOTTOM > PAGEHEIGHT) {
+          doc.addPage(); // add a new page
+          yPos = 30; // reset to the top of the new page
       }
       return yPos
   }
 
-  function createHeader(doc, userName) {
+function createHeader(doc, userName) {
+    /* Creates the top information, before the filtering info */
     let yPos = 20;
-    var name = userName; // temporary
+    var name = userName;
 
-    // Add the image at the top left
-    doc.addImage('/static/images/pureFinanceLogo.png', 'PNG', 10, 10, 30, 30); // Path to your static image
+    //  image at the top left
+    doc.addImage('/static/images/pureFinanceLogo.png', 'PNG', 10, 10, 30, 30); 
 
-    // Add titles
+    // add titles
     createSingleText(doc, "Financial Report", 20, yPos);
-    yPos += 10;  // Adjust yPos for the next title
+    yPos += 10;  
     createSingleText(doc, name, 15, yPos);
     yPos += 10;
+    // extra information to handle the link
     createSingleText(doc, "Made with ", 15, yPos, underlinedPart = "PureFinance", url = "https://purefinance.vercel.app/");
     yPos += 10;
-
-    // Add additional content
     createSingleText(doc, "PureFinance gives you the ability to customize Financial Reports.", 12, yPos);
-    yPos += 5;
+    yPos += 5;  // smaller font, smaller change
     createSingleText(doc, "Below are the filters used to make this report", 12, yPos);
     yPos += 10;
 }
 
-
 function createMultipleTextOneLine(doc, text1, text2, text3, yPos, bold2 = false, bold3 = false){
+    // texts at multiple x positions
+    
     const PAGEWIDTH = doc.internal.pageSize.getWidth();
 
+    // constants
     const TABLEX = 30;
     const MARGIN = 5;
     const XINC3TEXT = 50;
     const XINC2TEXT = 70;
     
 
-    // Create a border around the text
-    const totalWidth = 150; // Adding space between texts and margins
-    const borderHeight = 8; // Height for the border (adjust as needed)
+    // create a border around the text
+    const totalWidth = 150; // adding space between texts and margins
+    const borderHeight = 8; // height of each section
     var yPosChange = 8;
 
-    // Draw the border (rectangle). We subtract 5 from the yPos to make sure the text is nice in the border
 
+    if (text3) {  // if there's a third text
 
-    if (text3) {
+        // draw a rectangle around the text
         doc.rect((PAGEWIDTH - totalWidth) / 2, yPos - 5, totalWidth, borderHeight);
-        doc.text(text1, MARGIN + TABLEX, yPos);    
-        if (bold2){
+
+        doc.text(text1, MARGIN + TABLEX, yPos); 
+        if (bold2){ // determine if it should be bolded
             doc.setFont("times", "bold");
         } else {
             doc.setFont("times", "normal");
         }
-        doc.text(text2, MARGIN + TABLEX + XINC3TEXT, yPos);  // "Raw Transactions"
+        doc.text(text2, MARGIN + TABLEX + XINC3TEXT, yPos); 
         
         if (bold3){
             doc.setFont("times", "bold");
@@ -254,20 +260,22 @@ function createMultipleTextOneLine(doc, text1, text2, text3, yPos, bold2 = false
             doc.setFont("times", "normal");
         }
 
-        doc.text(text3, MARGIN + TABLEX + XINC3TEXT * 2, yPos);    // "Summaries"
+        doc.text(text3, MARGIN + TABLEX + XINC3TEXT * 2, yPos); 
         doc.setFont("times", "normal")
     } else {
+
+        // if neccesary, split the text with the | symbol
         const lines1 = text1.split('|').map(line => line.trim());
         const lines2 = text2.split('|').map(line => line.trim());
     
-        var yPosChange = Math.max(lines1.length * 8, lines2.length * borderHeight)
+        // change in yPos to be returned
+        yPosChange = Math.max(lines1.length * 8, lines2.length * borderHeight)
     
         doc.rect((PAGEWIDTH - totalWidth) / 2, yPos - 5, totalWidth, yPosChange);
     
-    
-        // Display each line on a new line
+        // display each line on a new line
         lines1.forEach((line, index) => {
-            var indent = 0
+            var indent = 0  // indent each item of the list
             if (index >= 1 && line !== "None"){
                 line = `${index}. ${line}`
                 indent = 5
@@ -284,39 +292,39 @@ function createMultipleTextOneLine(doc, text1, text2, text3, yPos, bold2 = false
             doc.text(line, TABLEX + MARGIN + XINC2TEXT + indent, yPos + (index * 8));
         });
     }
-    return yPosChange
+    return yPosChange  // change in yPos
 }
 
 function createSingleText(doc, text, fontSize, yPos, underlinedPart = "", url = "none", indent = false) {
     const PAGEWIDTH = doc.internal.pageSize.getWidth();
     doc.setFontSize(fontSize);
 
-    // Split the text into regular and underlined parts
+    // split the text into regular and underlined parts if needed
     const regularText = underlinedPart ? text.split(underlinedPart)[0] : text;
     const underlinedText = underlinedPart ? underlinedPart : "";
 
-    // Calculate the width of the regular and underlined parts
+    // calculate the width of the regular and underlined parts
     const regularTextWidth = doc.getTextWidth(regularText);
     const underlinedTextWidth = doc.getTextWidth(underlinedText);
 
-    var indentSize = indent ? 5 : 0;
+    var indentSize = indent ? 5 : 0;  // see if an indent is needed
 
-    // Place the regular text
+    // place the regular text
     doc.text(regularText, (PAGEWIDTH - regularTextWidth - underlinedTextWidth) / 2 + indentSize, yPos);
 
     if (underlinedText) {
-        // Place the underlined part
+        // place the underlined part
         doc.text(underlinedText, (PAGEWIDTH - regularTextWidth - underlinedTextWidth) / 2 + regularTextWidth, yPos);
 
-        // Underline the text
+        // underline the text
         doc.line(
             (PAGEWIDTH - regularTextWidth - underlinedTextWidth) / 2 + regularTextWidth,
-            yPos + 1, // Slightly below the text for the underline
+            yPos + 1, // slightly below the text for the underline
             (PAGEWIDTH - regularTextWidth - underlinedTextWidth) / 2 + regularTextWidth + underlinedTextWidth,
             yPos + 1
         );
 
-        // Add a clickable link to the underlined part
+        // add a clickable link to the underlined part
         doc.link(
             (PAGEWIDTH - regularTextWidth - underlinedTextWidth) / 2 + regularTextWidth,
             yPos - fontSize,
@@ -328,6 +336,7 @@ function createSingleText(doc, text, fontSize, yPos, underlinedPart = "", url = 
 }
 
 function createReportInformation(doc, reportType) {
+    /* Info about the filtering for the report */
     if (reportType === "rawTransactions"){
         var rawTransactions = true; 
     } else {
@@ -347,13 +356,15 @@ function createReportInformation(doc, reportType) {
  
     let includeInitialBalance = document.getElementById("include-initial-balance").checked;
  
+    // show the type of report amd transaction types included
     let yPos = 70;
     yPos += createMultipleTextOneLine(doc, "Report Type:", "Raw Transactions", "Summaries", yPos, rawTransactions, !rawTransactions)
     yPos += createMultipleTextOneLine(doc, "Transaction Types Included:", "Incomes", "Expenses", yPos, includeIncome, includeExpense)
     
-    if (rawTransactions) {
+    if (rawTransactions) {  // if it includes the initial balance
         yPos += createMultipleTextOneLine(doc, "Includes Initial Balance:", "Yes", "No", yPos, includeInitialBalance, !includeInitialBalance)
     } else {
+        // displays info about the summary
         var summarySize, referenceDate;
 
         const selectedValue = document.querySelector('input[name="summaryType"]:checked').value;
@@ -368,16 +379,20 @@ function createReportInformation(doc, reportType) {
             summarySize = selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)  // capitlize the first character of a string. Ex. - variable name "weekly" to Weekly
         }
         
+        // reference date is only needed for custom
         if (referenceDate){
             yPos += createMultipleTextOneLine(doc, `Summary Size: ${summarySize}`, `Reference Date: ${referenceDate}`, "", yPos)
         } else {
-        yPos += createMultipleTextOneLine(doc, `Summary Size: ${summarySize}`, "", "", yPos)
+            yPos += createMultipleTextOneLine(doc, `Summary Size: ${summarySize}`, "", "", yPos)
         }
     }
  
      var startDate = "All Dates"
-     var endDate = "All Dates"
+     var endDate = "All Dates"  // if there's no filtering, keep them like this
      const dateToggle = document.getElementById('date-filter-checkbox');
+
+     // note that in the process of making the start date and end date for filtering, no transactions will be seen, 
+     // and the export to PDF button will be hidden, so nothing will be undefined
      if (dateToggle.checked) {
          startDate = document.getElementById('start-date').value;  // get the start and end dates
          endDate = document.getElementById('end-date').value;
@@ -385,10 +400,7 @@ function createReportInformation(doc, reportType) {
          endDate = formatDate(endDate)
      }    
  
-  //   const pageHeight = doc.internal.pageSize.getHeight();
-   //  const marginBottom = 20;
- 
-     var lowPrice = "All Prices";
+     var lowPrice = "All Prices";  // if there's no filtering, keep them like this
      var highPrice = "All Prices";
      const priceToggle = document.getElementById('price-filter-checkbox');
      if (priceToggle.checked){
@@ -416,10 +428,12 @@ function createReportInformation(doc, reportType) {
         sortText = "By Date (Most Recent to Least Recent)";  
     }
     
+    // display all of the filtering and sorting
      yPos += createMultipleTextOneLine(doc, `Start Date: ${startDate}`, `End Date: ${endDate}`, "", yPos)
      yPos += createMultipleTextOneLine(doc, `Low Price: ${lowPrice}`, `High Price: ${highPrice}`, "", yPos)
      yPos += createMultipleTextOneLine(doc, `Sort: ${sortText}`, "", "", yPos)
 
+     // determine which categories are on screen
      const categoryCheckboxes = getAllCategoryCheckboxes()
 
      var incomeCheckedCategories = [];
@@ -428,15 +442,15 @@ function createReportInformation(doc, reportType) {
      var expenseUncheckedCategories = []
   
      categoryCheckboxes.forEach(checkbox => {
-      var checkboxValueSplit = checkbox.value.split("-")
-      if (checkboxValueSplit[0] !== "No Category") {
-          if (checkbox.checked){
-              if (checkboxValueSplit[1] === "income_source"){
+      var checkboxValueSplit = checkbox.value.split("-")  // split between the name and transaction type (income_source/expense)
+      if (checkboxValueSplit[0] !== "No Category") {  // don't include no category
+          if (checkbox.checked){  // put in the checked categories
+              if (checkboxValueSplit[1] === "income_source"){  // determine where to put it
                   incomeCheckedCategories.push(checkboxValueSplit[0])
               } else {
                   expenseCheckedCategories.push(checkboxValueSplit[0])
               }
-          } else {
+          } else {  // put in the expense categories
               if (checkboxValueSplit[1] === "income_source"){
                   incomeUncheckedCategories.push(checkboxValueSplit[0])
               } else {
@@ -453,9 +467,7 @@ function createReportInformation(doc, reportType) {
      var formattedUncheckedExpenseCategories = expenseUncheckedCategories.join(" ") || "None";
   
       yPos += createMultipleTextOneLine(doc, `Income Categories Included: |${formattedCheckedIncomeCategories}`, `Expense Categories Included: |${formattedCheckedExpenseCategories}`, "", yPos)
-  
       yPos += createMultipleTextOneLine(doc, `Income Categories Excluded: |${formattedUncheckedIncomeCategories}`, `Expense Categories Excluded: |${formattedUncheckedExpenseCategories}`, "", yPos)
-  
 
      return yPos;
 }

@@ -5,140 +5,133 @@ document.addEventListener("DOMContentLoaded", function () {
             input.addEventListener("change", createSummaries);
         });
 
+            // get the buttons and sections to change the visibility of
             const viewAllButton = document.getElementById('toggle-view-all');
             const viewSummariesButton = document.getElementById('toggle-view-summaries');
             const viewAllSection = document.getElementById('view-all-transactions');
             const viewSummariesSection = document.getElementById('view-summaries');
     
-            // Event listener for "View All Transactions" button
+            // going from view summaries to view all transactions
             viewAllButton.addEventListener('click', function() {
-                viewAllSection.style.display = 'block';
+                viewAllSection.style.display = 'block';  // make all the transactions visible
                 viewSummariesSection.style.display = 'none';
-                viewAllButton.classList.add('btn-primary');
+                viewAllButton.classList.add('btn-primary');  // turn it from grey to blue
                 viewAllButton.classList.remove('btn-secondary');
-                viewSummariesButton.classList.add('btn-secondary');
+                viewSummariesButton.classList.add('btn-secondary'); 
                 viewSummariesButton.classList.remove('btn-primary');
             });
     
-            // Event listener for "View Summaries" button
+            // going from view all transactions to view summaries
             viewSummariesButton.addEventListener('click', function() {
                 viewAllSection.style.display = 'none';
                 viewSummariesSection.style.display = 'block';
-                viewSummariesButton.classList.add('btn-primary');
+                viewSummariesButton.classList.add('btn-primary');  // grey to blue
                 viewSummariesButton.classList.remove('btn-secondary');
                 viewAllButton.classList.add('btn-secondary');
                 viewAllButton.classList.remove('btn-primary');
             });
 
-            const customRadioButton = document.getElementById('custom');
-            const customOptions = document.getElementById('custom-options');
+            const customRadioButton = document.getElementById('custom');  // this is the custom option when making summary units
+            const customOptions = document.getElementById('custom-options');  // this is the info for making custom summaries
         
-            // Show the custom input section when 'Custom' is selected
+            // show the custom options based on if customRadioButton is selected
             customRadioButton.addEventListener('change', () => {
                 if (customRadioButton.checked) {
-                    customOptions.style.display = 'flex'; // Show custom options
+                    customOptions.style.display = 'flex'; // show the options
                 } else {
-                    customOptions.style.display = 'none'; // Hide custom options when other radio is selected
+                    customOptions.style.display = 'none'; // hide custom options when other radio is selected
                 }
             });
-        
-            // Handle other radio button selections (optional)
-            const weeklyRadioButton = document.getElementById('weekly');
-            const monthlyRadioButton = document.getElementById('monthly');
-            const annuallyRadioButton = document.getElementById('annually');
-        
-            // Add event listeners to hide custom options when other types are selected
-            weeklyRadioButton.addEventListener('change', () => {
-                customOptions.style.display = 'none';
-            });
-            monthlyRadioButton.addEventListener('change', () => {
-                customOptions.style.display = 'none';
-            });
-            annuallyRadioButton.addEventListener('change', () => {
-                customOptions.style.display = 'none';
-            });
-        
 });
 
 
 
 function createSummaries() {
-    const tbody = document.querySelector('#summariesTable tbody');
-    tbody.innerHTML = ''; // Clear existing rows
+    /* This function will create the summaries, called any time there would be a change */
 
-    let checkedValue = document.querySelector('input[name="summaryType"]:checked').value;
-    if(checkedValue === "custom"){
-        document.getElementById("noSummariesText").style.display = "none"
+    const tbody = document.querySelector('#summariesTable tbody');
+    tbody.innerHTML = ''; // clear existing summaries
+
+    // determine what type of summary the user asked for (week, custom, etc.)
+    let summaryType = document.querySelector('input[name="summaryType"]:checked').value;
+    if(summaryType === "custom"){
+        document.getElementById("noSummariesText").style.display = "none"  // there will be none before the user enters the settings, so we hide this to make it less confusing
         document.getElementById("summariesTable").style.display = ""
         var summarySize = document.getElementById("custom-value").value
         var summarySizeUnit = document.getElementById('custom-unit').value;
+
+        // this dates the custom date and decreases the start time to before 1900 (users can't enter anything before that), as negatives wouldn't behave correclty
         var startTime = decreaseStartTime(document.getElementById('custom-date').value, summarySize, summarySizeUnit);
     }
 
 
-    if(checkedValue === "weekly") {
-        summarySize = 7;
-        var startTime = "Sun Dec 31 1899";   // if values are before this date, they will be negative. That is fine
-        var summarySizeUnit = "day" 
-    } else if (checkedValue === "monthly") {
-        var startTime = "Mon Jan 1 1900"
-        var summarySize = 1;
+    if(summaryType === "weekly") {
+        summarySize = 7;  // 7 days
+        var startTime = "Sun Dec 31 1899";   // by default, the cycle starts on sunday. It is from 1899 to ensure no negative
+        var summarySizeUnit = "day"  // every 7 days rather than once per week, makes it more customizeiable with custom options
+    } else if (summaryType === "monthly") {
+        var startTime = "Mon Jan 1 1900"  // first of the month (and year)
+        var summarySize = 1;  // 1 month
         var summarySizeUnit = "month"
-    } else if (checkedValue === "annually") {
-        var startTime = "Mon Jan 1 1900"
-        var summarySize = 1;
+    } else if (summaryType === "annually") {
+        var startTime = "Mon Jan 1 1900"  // first of the year
+        var summarySize = 1;  // 1 year
         var summarySizeUnit = "year"
     }
 
     var allSummaries = [];
-    // var summaryTemporaryStorage = [];
     let currentSummaryStartDate;
     var currentSummaryBalance = 0;
 
     let transactions = getAllVisibleTransactions();  // only include the transactions on screen
 
-    // sort the transactions by date
+    // sort the transactions by date so that they are proccessed into summaries correclty
     transactions.sort((a, b) => {
-        // Get the date text from each transaction
+        // get the date text from each transaction
         const dateA = a.querySelector('td:nth-child(3)').textContent.trim();
         const dateB = b.querySelector('td:nth-child(3)').textContent.trim();
         
-        // Convert the date text to Date objects
+        // make them Date objects
         const dateObjA = new Date(dateA);
         const dateObjB = new Date(dateB);
         
-        // Compare the Date objects
+        // compare the Date objects
         return dateObjA - dateObjB;
     });
 
-
     transactions.forEach(transaction => {
+        // remember that querySelector is one-based
         const transactionDate = transaction.querySelector('td:nth-child(3)').textContent.trim();
-        const formattedDate = new Date(transactionDate);  // Parse the date string into a Date object
+        const formattedDate = new Date(transactionDate);  // Parse the date
+        // formattedDate looks like Mon Jan 27 2025 00:00:00 GMT-0500 (Eastern Standard Time)
 
-        const transactionAmount = transaction.querySelector('td:nth-child(5)').textContent.trim();
-        const transactionType = transaction.querySelector('td:nth-child(1)').textContent.trim();  
+        const transactionAmount = transaction.querySelector('td:nth-child(5)').textContent.trim();  // positive string with $
+        const transactionType = transaction.querySelector('td:nth-child(1)').textContent.trim();   // income_source or expense 
        
-        var newDate = getNewDate(startTime, transactionDate, summarySize, summarySizeUnit)
-       if (!currentSummaryStartDate) {
-            currentSummaryStartDate = newDate;
+        // this is the start date of that summary. For example, if the transactionDate (used due to differing formats) is Wednesday and the summary is weekly on sundays, it would turn it to that Sunday
+        var summaryStartDate = getSummaryStartDate(startTime, transactionDate, summarySize, summarySizeUnit)
+       
+        if (!currentSummaryStartDate) {  // if there is no currentSummaryStartDate (this is the first summary)
+            currentSummaryStartDate = summaryStartDate;  // make the current one it, and format it
             currentSummaryStartDate = new Date(currentSummaryStartDate)
         }
+
+        // get the difference between the current date and the start of the current summary
         let difference = getDateDifference(currentSummaryStartDate, formattedDate);
 
+        // if the difference is more than one summary period, make a new one
         if (difference.days >= summarySize && summarySizeUnit === "day" ||
             difference.months >= summarySize && summarySizeUnit === "month" ||
             difference.years >= summarySize && summarySizeUnit === "year" ) {
-            // Add the current summary to the allSummaries array if the condition is met
+            
+            // add to all summaries
             allSummaries.push([currentSummaryStartDate, currentSummaryBalance]);
             
-            // Reset for the next summary period
-            currentSummaryStartDate = newDate;
+            // reset for the next summary period
+            currentSummaryStartDate = summaryStartDate;
             currentSummaryBalance = 0;
         }
     
-
-
         // trim the balances and add or subtract them as needed
         if (transactionType === "income_source") {
             currentSummaryBalance += parseFloat(transactionAmount.replace('$', '').replace(/,/g, '').trim());
@@ -147,15 +140,16 @@ function createSummaries() {
         }
 
     });
+    // at the end, add a summary
     allSummaries.push([currentSummaryStartDate, currentSummaryBalance])
-
+    // sorting the summaries
     const sortOption = document.querySelector('input[name="transactionSort"]:checked').value;
     allSummaries.sort((a, b) => {
         switch (sortOption) {
             case 'byAmountLH':  // low to high amount
-                return a[1] - b[1];
+                return Math.abs(a[1]) - Math.abs(b[1]);
             case 'byAmountHL':  // high to low amount
-                return b[1] - a[1];
+                return Math.abs(b[1]) - Math.abs(a[1]);
             case 'byDateLM':  // least recent to most recent start date
                 return new Date(a[0]) - new Date(b[0]);
             default: // most to least recent date. This will also occur when they sort alphabetically, which wouldn't make sense
@@ -165,11 +159,10 @@ function createSummaries() {
     
 
 
-    if (transactions.length > 0) {
+    if (transactions.length > 0) {  // if there's more than one transaction, display the summaryies
         allSummaries.forEach(summary => {
-            const rowClass = summary[1] > 0 ? 'green' : 'red';
+            const rowClass = summary[1] > 0 ? 'green' : 'red';  // determine the colors
 
-            // the true parameter for the money makes it an absolute value
             // from the second date, one is being subtracted as adding the amount would be the start of the next cycle
             const row = `
                 <tr class="${rowClass}" name="summaries">
@@ -178,14 +171,14 @@ function createSummaries() {
                     <td>$${formatMoney(summary[1])}</td> 
                 </tr>
             `;
-            tbody.innerHTML += row;
+            tbody.innerHTML += row;  // add the row
         });
     }
 
-    if (allSummaries.length === 0 || transactions.length === 0){
+    if (allSummaries.length === 0 || transactions.length === 0){  // if there's nothing, display that nothing text
         document.getElementById("noSummariesText").style.display = ""
         document.getElementById("summariesTable").style.display = "none"
-    } else {
+    } else {  // display the summaries
         document.getElementById("noSummariesText").style.display = "none"
         document.getElementById("summariesTable").style.display = ""
     }
@@ -193,24 +186,3 @@ function createSummaries() {
 
 }
 
-
-
-        /*
-      //  const rowClass = transaction.transaction_type === 'income_source' ? 'green' : 'red';
-        
-      
-      // const categoryName = transaction.transaction_category?.category_name || 'No Category';
-        const transactionType = transaction.querySelector('td:nth-child(1)').textContent.trim();
-        const transactionDate = transaction.querySelector('td:nth-child(3)').textContent.trim();  // select the 5th <td> (Amount cell)
-        const transactionAmount = transaction.querySelector('td:nth-child(5)').textContent.trim();  // select the 5th <td> (Amount cell)
-        const rowClass = transactionType === 'income_source' ? 'green' : 'red';
-
-        const row = `
-            <tr class="${rowClass}" name="summaries">
-                <td>${transactionDate}</td>
-                <td>${transactionDate}</td>
-                <td>${transactionAmount}</td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-        */

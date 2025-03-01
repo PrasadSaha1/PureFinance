@@ -1,5 +1,7 @@
 function handleFormSubmit(event, form, message) {
-    event.preventDefault(); // Prevent form submission
+    // this function will have a form go through the confirmation modal before submitting
+
+    event.preventDefault(); // prevent form submission
 
     showConfirmationModal(message).then((confirmed) => {
         if (confirmed) {
@@ -10,39 +12,38 @@ function handleFormSubmit(event, form, message) {
 
 function showConfirmationModal(message, forOutputReport = false) {
     return new Promise((resolve) => {
-        // Set message and show modal
+        // set message and show modal
         document.querySelector('.modal-body').textContent = message;
-        if (forOutputReport){
+        if (forOutputReport){  // there would be no text
             document.getElementById('modalTextInput').style.display = "";
         } else {
             document.getElementById('modalTextInput').style.display = "none";
         }
-        document.getElementById("modalTextError").style.display = "none"
+        document.getElementById("modalTextError").style.display = "none"  // hide the error message
 
         let confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
         confirmationModal.show();
 
-        // Handle cancel button
         document.getElementById('cancelButton').onclick = function() {
             confirmationModal.hide();
-            resolve(false); // Reject action
+            resolve(false); // stop the action
         };
 
-        // Handle confirm button
+        // confirm button
         document.getElementById('confirmActionButton').onclick = function() {
             if (forOutputReport) {
                 var userInput = document.getElementById("userInput").value.trim();
                 var errorText = document.getElementById("modalTextError");
     
-                if (userInput === "") {
+                if (userInput === "") {  // add the error
                     errorText.style.display = "block"; 
                 } else {
                     confirmationModal.hide();
-                    resolve(userInput); // Resolve with user input if valid
+                    resolve(userInput); // return the user input for the output report to use
                 }
             } else {
                 confirmationModal.hide();
-                resolve(true); // Confirm action
+                resolve(true); 
             }
         };
     });

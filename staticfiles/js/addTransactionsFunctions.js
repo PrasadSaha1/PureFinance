@@ -23,13 +23,6 @@ document.getElementById("transaction-form").addEventListener("submit", function(
     let transactionAmount = formData.get("transaction_amount");
 
 
-
-    var signedAmount = Number(transactionAmount);  // convert from str to number
-    if (transactionType === "expense"){
-        signedAmount *= -1;
-    }
-
-
     // we need these so we can put them in the edit transaction mode later on
     let income_categories = formData.get("hidden_income_categories");  // get the hidden categories
     let expense_categories = formData.get("hidden_expense_categories");
@@ -66,21 +59,23 @@ document.getElementById("transaction-form").addEventListener("submit", function(
     `;
     
 
-    if (checkIfVisible(transactionType, transactionCategory, transactionName, transactionDate, transactionAmount)){
-        updateCurrentBalance(signedAmount); 
-        document.querySelector("table tbody").appendChild(tempRow);
+    // the signed amount is used to update the current balance, as newly created transactions wouldn't work correctly otherwise
+    var signedAmount = Number(transactionAmount);  // convert from str to number
+    if (transactionType === "expense"){
+        signedAmount *= -1;
+    }
 
+    // the second parameter will cause the function to return if it would be visible
+    if(filterTransactions(false, [transactionType, transactionCategory, transactionDate, transactionAmount])){
+        // only update the balance and show the transaction if it's visible with the filtering categories
+        updateCurrentBalance(signedAmount); // the signedAmount parameter will add it to the current balance
+        document.querySelector("table tbody").appendChild(tempRow);  // make it visible
     }
 
     // add the temporary row to the table, needed for it to appear
     sortTransactions(); // filter and sort with the new row. Must be called again after the tempRow is deleted
-    // toggleCurrentBalance();
-    filterTransactions(true);
+    filterTransactions(true);  // the true parameter means don't update the current balance, as we just did and it would be inaccurate doing it from here
     toggleCategoryDivs();
-
-
-
-   // let tempRow1 = document.getElementById("temp-row");
 
 
     // send the AJAX request
@@ -142,7 +137,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
         </td>
         <td>
             <span class="view-mode">${formatDate(transactionDate)}</span>
-            <input type="date" class="edit-mode form-control" name="date" value="${formatTransactionDate(transactionDate)}" style="display:none;" required>
+            <input type="date" class="edit-mode form-control" name="date" value="${transactionDate}" style="display:none;" required>
         </td>
         <td>
             <span class="view-mode">${transactionName}</span>
@@ -165,7 +160,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
 
         // we must filter and sort the transactions again as we deleted the old row
        // toggleCurrentBalance();
-        filterTransactions(false);
+        filterTransactions(false);  // now it's false, so update the current balance if neccesary. If it doesn't change, the user won't see the animation
         sortTransactions();
 
     })
@@ -173,7 +168,7 @@ document.getElementById("transaction-form").addEventListener("submit", function(
 
 
 function toggleCategoryDivs(transactionChange = "none") {
-    /* This determines which dropdown, if any, will be shown on add transaction */
+    /* This determines which dropdown (income/expense categories), if any, will be shown on add transaction */
     // get the entire div
     var incomeCategoriesDiv = document.getElementById('add_transaction_income_categories');
     var expenseCategoriesDiv = document.getElementById('add_transaction_expense_categories');
@@ -185,6 +180,7 @@ function toggleCategoryDivs(transactionChange = "none") {
     var numIncomeCategories = incomeCategorySelect ? incomeCategorySelect.options.length - 1 : 0; // Subtract 1 for the default 'Select Category' option
     var numExpenseCategories = expenseCategorySelect ? expenseCategorySelect.options.length - 1 : 0; // Same for expense category
 
+    // if there was a change in the amount of transactions, transactionChange will reflect that
     if (transactionChange === "incomeDeleted") {
         numIncomeCategories --;  // factor in the new one
     } else if (transactionChange === "expenseDeleted") {
@@ -203,7 +199,7 @@ function toggleCategoryDivs(transactionChange = "none") {
     document.getElementById("noExpenseCategoriesAddTransaction").style.display = "none"
 
     if (document.getElementById('income_source').checked) { 
-        if (numIncomeCategories || transactionChange === "added") {
+        if (numIncomeCategories || transactionChange === "added") {  // if the transactionChange is added, then show them, but it will not be reflected in the amount while it loads
             document.getElementById("addTransactionSettings").style.display = ""
             incomeCategoriesDiv.style.display = 'block';
             incomeSelect.setAttribute('required', 'true');  // make it required

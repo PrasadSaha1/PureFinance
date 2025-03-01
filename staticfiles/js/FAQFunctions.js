@@ -1,27 +1,30 @@
 function searchQuestions() {
-    // Get the search input and convert it to lowercase
+    /* Controls the search feature of the FAQ */
+
+    // make it lowercase to expand the amount of posibilties
     const query = document.getElementById('searchInput').value.toLowerCase();
-    
-    
-    const headers = document.querySelectorAll('.sectionHeaders'); // Use querySelectorAll to select all headers
+        
+    // get all the headers. If the query is not blank, hide them, else show them
+    // the headers are hiden to make the code cleanr
+    const headers = document.querySelectorAll('.sectionHeaders'); 
     if (query) {
         headers.forEach(function(header) {
-            header.style.display = "none"; // Hide all headers if query is truthy
+            header.style.display = "none"; 
         });
     } else {
         headers.forEach(function(header) {
-            header.style.display = ""; // Show all headers if query is falsy
+            header.style.display = ""; 
         });
     }
         
-    // Get all the question buttons
+    // getting all the questions
     const items = document.querySelectorAll('.accordion-header');
     
     items.forEach(function(question) {
-        // Check if the question contains the search query
+        // check if the question contains the search query
         const questionText = question.innerText.toLowerCase();
         
-        // Show or hide the question based on whether it matches the query
+        // show or hide the question based on whether it matches the query
         if (questionText.includes(query)) {
             question.closest('.accordion-item').style.display = '';
         } else {
@@ -31,36 +34,27 @@ function searchQuestions() {
 }
 
 function toggleAccordion(expand) {
+    /* Toggles accoridan for viewing the FAQ secctions */
+
+    const allAccordions = document.querySelectorAll('.accordion-collapse');  // this is information within the class
+    const allButtons = document.querySelectorAll('.accordion-button');  // these are the according buttons
     
-        const allAccordions = document.querySelectorAll('.accordion-collapse');
-        const allButtons = document.querySelectorAll('.accordion-button');
-        
-        allAccordions.forEach((accordion) => {
-            if (expand) {
-                new bootstrap.Collapse(accordion, { toggle: true });
-            } else {
-                if (accordion.classList.contains('show')) {
-                    new bootstrap.Collapse(accordion, { toggle: true });
-                }
-            }
-        });
-
-        allButtons.forEach((button) => {
-            if (expand) {
-                button.setAttribute('aria-expanded', 'true');
-            } else {
-                button.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-        // Change button text based on action
+    allAccordions.forEach((accordion) => {
+        let bootstrapCollapse = new bootstrap.Collapse(accordion, { toggle: false });  // make a new bootstrap collapse object
+    
         if (expand) {
-            document.getElementById('expandAll').style.display = 'none';
-            document.getElementById('collapseAll').style.display = 'inline-block';
+            bootstrapCollapse.show(); // make it expand
         } else {
-            document.getElementById('expandAll').style.display = 'inline-block';
-            document.getElementById('collapseAll').style.display = 'none';
+            bootstrapCollapse.hide(); // make it collapse
         }
-                        
+    });
 
-    }
+    allButtons.forEach((button) => {
+        // determines aria-expanded, useful for accesbility
+        if (expand) {
+            button.setAttribute('aria-expanded', 'true');
+        } else {
+            button.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
