@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, update_session_auth_hash, logout
 from register.send_emails import send_verification_email
 from .determine_email_level import determine_email_level
 from .models import TransactionCategory, Transaction
+from .models import New_Goal as Goal
 from django.http import JsonResponse
 from register.send_emails import send_custom_email
 from my_finance.settings import EMAIL_HOST_USER
@@ -173,17 +174,18 @@ def rename_category(request, category_id):
   
 @login_required(login_url="/")
 def add_transaction(request):
-    # adding a transaction dynamically with an AJAX
+    """Adding a transaction dynamically with an AJAX""" 
     if request.method == 'POST':
         transaction_type = request.POST.get('transaction_type')  # income_source or expense
         transaction_name = request.POST.get('transaction_name')
         transaction_date = request.POST.get('transaction_date')
         transaction_amount = request.POST.get('transaction_amount')
 
-        # fetch different data based on the transaction type
+        # Fetch different data based on the transaction type
         if transaction_type == 'income_source':
-            category_name = request.POST.get('income_category')  # the name from the options
-            # get the category from the name. Category names must be unique within their transaction type, so there shouldn't be issues with the name
+            category_name = request.POST.get('income_category')  # The name from the options
+            # Get the category from the name. 
+            # Category names must be unique within their transaction type, so there shouldn't be issues with the name
             category = TransactionCategory.objects.get(user=request.user, category_name=category_name, transaction_type="income_source")
         elif transaction_type == 'expense': 
             category_name = request.POST.get('expense_category')
@@ -273,3 +275,45 @@ def add_initial_balance(request):
 
         return JsonResponse({"success": True})
     
+@login_required(login_url="/")
+def goal_tracker(request):
+    categories = TransactionCategory.objects.filter(user=request.user)
+    income_categories = categories.filter(transaction_type='income_source')
+    expense_categories = categories.filter(transaction_type='expense')
+
+    goals = Goal.objects.filter(user=request.user) 
+
+    return render(request, "main/goal_tracker.html", {"income_categories": income_categories, "expense_categories": expense_categories, "goals": goals})
+
+
+@login_required(login_url="/")
+def add_goal(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)  
+
+        goal_name = data.get('name')
+        goal_amount = data.get('amount')
+        goal_start_date = data.get('start_date')
+        goal_end_date = data.get('end_date')
+        goal_income_categories = data.get('income_categories')
+        goal_expense_categories = data.get('expense_categories')
+        goal_type = data.get('type')
+        goal_description = data.get('description')
+
+
+        new_goal = Goal.objects.create(
+            user=request.user,
+            goal_name=goal_name,
+            goal_amount=goal_amount,
+            goal_start_date=goal_start_date,
+            goal_end_date=goal_end_date,
+            goal_income_categories=goal_income_categories,
+            goal_expense_categories=goal_expense_categories,
+            goal_type=goal_type,
+            goal_description=goal_description,
+        )
+
+        return JsonResponse({"goalId": new_goal.id})
+
+
+

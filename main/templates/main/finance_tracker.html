@@ -223,7 +223,8 @@ Finance Tracker
             <div>
                 <label for="end-date">End Date:</label>
                 <input type="date" id="end-date" name="end-date">
-            </div>       
+            </div>
+                  
             
             <!-- input validation - right below the inputs -->
             <label id="date-filter-error-1" class="text-danger" style="display: none;">
@@ -498,6 +499,7 @@ Finance Tracker
 <script>
     window.onload = function() {
         autofillDate(); 
+        setFilterEndDate(); // set the end date to today
         filterTransactions(false); // filter transactions and show the current balance
         sortTransactions(); 
         toggleCategoryDivs();  // could also show No Category

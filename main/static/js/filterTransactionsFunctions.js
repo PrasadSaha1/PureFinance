@@ -256,6 +256,7 @@ function resetFilters() {
     document.getElementById('high-price').value = '';
 
     document.getElementById('byDateML').checked = true;  // sort by date most recent to least recent
+    setFilterEndDate();  // set the end date to the current date
 
     filterTransactions(false, );  // undo the filters and sorts
     sortTransactions();

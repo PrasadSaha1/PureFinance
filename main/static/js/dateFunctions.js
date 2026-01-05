@@ -1,3 +1,8 @@
+function setFilterEndDate() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('end-date').value = today;
+}
+
 function formatDate(value) {
     // this function formats a date from YYYY-MM-DD to Mon. Day, Year  - the same as the default
     const months = [
@@ -24,7 +29,7 @@ function decreaseStartTime(date, summarySize, summarySizeUnit) {
 
     if (summarySizeUnit === "day") {
         // take the given date and subtract is as needed
-        date.setDate(date.getDate() - summarySize * DAYSUBTRACT + 1);  // +1 due to time zones
+        date.setDate(date.getDate() - summarySize * DAYSUBTRACT);  // +1 due to time zones
         return new Date(date.toDateString());  // return a Date object
     } else if (summarySizeUnit === "month") {
         date.setMonth(date.getMonth() - summarySize * MONTHSUBTRACT);
@@ -70,18 +75,22 @@ function getSummaryStartDate(referenceDate, currentDate, summarySize, summaryUni
 function formatDateFromISO(dateString) {
     /* from ISO date to Mon. day, year  
     Used in create summaries*/
-    const date = new Date(dateString);
-    const options = {   
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric' 
-    };
-    
-    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+    try {
+        const date = new Date(dateString);
+        const options = {   
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+        };
+        
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
 
-    // split the formatted Date and return
-    const [month, day, year] = formattedDate.split(' ');
-    return `${month}. ${day} ${year}`;
+        // split the formatted Date and return
+        const [month, day, year] = formattedDate.split(' ');
+        return `${month}. ${day} ${year}`;
+    } catch (error) {
+        return dateString;  // return the input if there's an error
+    }
 }
 
 function getStartDate(date) {

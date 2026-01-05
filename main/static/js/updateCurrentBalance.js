@@ -1,3 +1,7 @@
+function moneyToFloat(moneyString) {
+    return parseFloat(moneyString.replace('$', '').replace(/,/g, '').trim());
+}
+
 function updateCurrentBalance(signedAmount = 0) {
     const balanceElement = document.getElementById("current-balance");
     const oldBalance = parseFloat(balanceElement.textContent.replace('$', '').replace(/,/g, '').trim());
@@ -12,9 +16,9 @@ function updateCurrentBalance(signedAmount = 0) {
 
             // trim the balances and add or subtract them as needed
             if (transactionType === "income_source") {
-                newBalance += parseFloat(amountText.replace('$', '').replace(/,/g, '').trim());
+                newBalance += moneyToFloat(amountText);
             } else {
-                newBalance -= parseFloat(amountText.replace('$', '').replace(/,/g, '').trim());
+                newBalance -= moneyToFloat(amountText);
             }
         }
     });

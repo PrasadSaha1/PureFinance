@@ -125,34 +125,34 @@ function createSummaries() {
         const transactionType = transaction.querySelector('td:nth-child(1)').textContent.trim();   // income_source or expense 
        
         // this is the start date of that summary. For example, if the transactionDate (used due to differing formats) is Wednesday and the summary is weekly on sundays, it would turn it to that Sunday
-        var summaryStartDate = getSummaryStartDate(startTime, transactionDate, summarySize, summarySizeUnit)
+        var newSummaryStartDate = getSummaryStartDate(startTime, transactionDate, summarySize, summarySizeUnit)
        
         if (!currentSummaryStartDate) {  // if there is no currentSummaryStartDate (this is the first summary)
-            currentSummaryStartDate = summaryStartDate;  // make the current one it, and format it
+            currentSummaryStartDate = newSummaryStartDate;  // make the current one it, and format it
             currentSummaryStartDate = new Date(currentSummaryStartDate)
         }
 
         // get the difference between the current date and the start of the current summary
-        let difference = getDateDifference(currentSummaryStartDate, formattedDate);
+        let dateDifference = getDateDifference(currentSummaryStartDate, formattedDate);
 
         // if the difference is more than one summary period, make a new one
-        if (difference.days >= summarySize && summarySizeUnit === "day" ||
-            difference.months >= summarySize && summarySizeUnit === "month" ||
-            difference.years >= summarySize && summarySizeUnit === "year" ) {
+        if (dateDifference.days >= summarySize && summarySizeUnit === "day" ||
+            dateDifference.months >= summarySize && summarySizeUnit === "month" ||
+            dateDifference.years >= summarySize && summarySizeUnit === "year" ) {
             
             // add to all summaries
             allSummaries.push([currentSummaryStartDate, currentSummaryBalance]);
             
             // reset for the next summary period
-            currentSummaryStartDate = summaryStartDate;
+            currentSummaryStartDate = newSummaryStartDate;
             currentSummaryBalance = 0;
         }
     
         // trim the balances and add or subtract them as needed
         if (transactionType === "income_source") {
-            currentSummaryBalance += parseFloat(transactionAmount.replace('$', '').replace(/,/g, '').trim());
+            currentSummaryBalance += moneyToFloat(transactionAmount);
         } else {
-            currentSummaryBalance -= parseFloat(transactionAmount.replace('$', '').replace(/,/g, '').trim());
+            currentSummaryBalance -= moneyToFloat(transactionAmount);
         }
 
     });

@@ -23,4 +23,6 @@ urlpatterns = [
     path('contact_us', views.contact_us, name='contact_us'),
     path('help', views.help, name='help'),
     path('add_initial_balance/', views.add_initial_balance, name='add_initial_balance'),
+    path('goal_tracker/', views.goal_tracker, name='goal_tracker'),
+    path('add_goal/', views.add_goal, name='add_goal'),
 ]
