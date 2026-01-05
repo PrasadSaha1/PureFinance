@@ -3,6 +3,7 @@
 | **Django**    | A Python-based web framework used for the backends. Automates processes such as sending emails and authentication.                     |
 | **PostgreSQL**| Compliments Django in storing user data. Uses SQL to store data in organized tables.                                                  |
 | **Bootstrap** | Used to style the website through CSS classes.                                                                                   |
+| **Google Slides** | Used to make the finance tracker flow chart.                                                                         |
 | **Vercel**    | Used to deploy the Django website. [This](https://vercel.com/templates/python/python-hello-world) template was used to set it up.   |
 | **Railway**   | Used to deploy the PostgreSQL database.                                                                                               |
 | [logo.com](https://logo.com/) | Used to generate the website's logo.                                                                                         |
